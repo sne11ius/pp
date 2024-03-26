@@ -10,7 +10,7 @@ policies:
         required: false
       spellcheck:
         locale: US
-      maximumOfOneCommit: true
+      maximumOfOneCommit: false
       conventional:
         types:
           - "build"

@@ -1,0 +1,22 @@
+name: Lint
+
+on: [pull_request]
+
+jobs:
+  lint-commit:
+    name: Lint commit message
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - name: Run conform
+        uses: siderolabs/conform@v0.1.0-alpha.29
+  lint-markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Run mdl
+        uses: actionshub/markdownlint@main

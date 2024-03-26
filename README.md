@@ -2,23 +2,38 @@
 
 Simple client/server planning poker
 
+This project is in early development, so the documentation is geared towards
+developers.
+
 ## Development
 
 ### Prerequisites
 
-- [Conform](https://github.com/siderolabs/conform) is required
-- [mdl](https://github.com/markdownlint/markdownlint) is required
-- Install commit hook with
+commits/pushes are checked by github actions to verify every change conforms to
+our development guidelines. To make sure your changes can be merged and land in
+the next release, consider running the checks on each commit.
+
+[docker](https://www.docker.com/) is required for the suggested commit-hook. We
+use docker during development so we don't need to install non-essential
+tools locally on each dev machine.
+
+Use the following script to install a git hook that checks your changes on each
+commit.
 
   ```bash
   cat <<EOF | tee .git/hooks/commit-msg
   #!/bin/sh
-  set -e
+  set -e # make sure we fail on any lint error
 
-  # This assumes, conform is in your PATH
-  conform enforce --commit-msg-file \$1
-  # This assumes, mdl is in your PATH
-  git ls-files | grep *.md | xargs mdl
+  # Verify commit message conforms to the guidelines
+  # see .conform.yaml for the current settings
+  docker run --rm -v $PWD:/src -w /src \
+    ghcr.io/siderolabs/conform:v0.1.0-alpha.22 enforce --commit-msg-file \$1
+  # Verify markdown files conform to the guidelines
+  # We use git ls-files instead of the -g option of markdownlint since it
+  # the option did not work as expected.
+  git ls-files | grep *.md | xargs docker run --rm \
+    -v ${PWD}:/data markdownlint/markdownlint
   EOF
   chmod +x .git/hooks/commit-msg
   ```

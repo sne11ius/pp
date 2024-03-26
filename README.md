@@ -2,6 +2,22 @@
 
 Simple client/server planning poker
 
+## Development
+
+### Prerequisites
+
+- [Conform](https://github.com/siderolabs/conform) is required
+- Install commit hook with
+  ```bash
+  cat <<EOF | tee .git/hooks/commit-msg
+  #!/bin/sh
+  
+  # This assumes, conform is in your $PATH
+  conform enforce --commit-msg-file \$1
+  EOF
+  chmod +x .git/hooks/commit-msg
+  ```
+
 ## Server
 
 - No persistence

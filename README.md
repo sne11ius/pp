@@ -92,7 +92,8 @@ commit.
 - Go wild with commit hooks and linters:
 
    - Markdown files
-   - Code files (eg. `detekt` for kotlin. No idea what the golang/rust ppl do)
+   - Code files (eg. `detekt`, `ktlint`, for kotlin. No idea what the
+     golang/rust ppl do)
       - Side project: create a native binary exe for detekt, since running jvm
         stuff on every commit is the worst
    - Commit msgs - enforce conventional commits

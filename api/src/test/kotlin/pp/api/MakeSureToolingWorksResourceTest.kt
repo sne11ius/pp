@@ -12,15 +12,14 @@ import org.junit.jupiter.api.Test
  */
 @QuarkusTest
 class MakeSureToolingWorksResourceTest {
-
     @Test
     fun testHelloEndpoint() {
-        registerParser("text/plain", TEXT);
+        registerParser("text/plain", TEXT)
         given()
-            .`when`().get("/hello")
+            .`when`()
+            .get("/hello")
             .then()
             .statusCode(200)
             .body(`is`("hello"))
     }
-
 }

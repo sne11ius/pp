@@ -23,8 +23,6 @@ commit.
   ```bash
   cat <<EOF | tee .git/hooks/commit-msg
   #!/bin/sh
-  set -e # make sure we fail on any lint error
-
   # Verify commit message conforms to the guidelines
   # see .conform.yaml for the current settings
   docker run --rm -v $PWD:/src -w /src \
@@ -34,6 +32,17 @@ commit.
   # the option did not work as expected.
   git ls-files | grep *.md | xargs docker run --rm \
     -v ${PWD}:/data markdownlint/markdownlint
+  # Check backend code
+  # stash any unstaged changes
+  git stash -q --keep-index
+  # run the spotlessCheck with the gradle wrapper
+  cd api && ./gradlew spotlessCheck --daemon
+  # store the last exit code in a variable
+  RESULT=$?
+  # unstash the unstashed changes
+  git stash pop -q
+  # return the './gradlew spotlessCheck' exit code
+  exit $RESULT
   EOF
   chmod +x .git/hooks/commit-msg
   ```

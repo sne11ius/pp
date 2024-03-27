@@ -28,8 +28,8 @@ commit.
   docker run --rm -v $PWD:/src -w /src \
     ghcr.io/siderolabs/conform:v0.1.0-alpha.22 enforce --commit-msg-file \$1
   # Verify markdown files conform to the guidelines
-  # We use git ls-files instead of the -g option of markdownlint since it
-  # the option did not work as expected.
+  # We use git ls-files instead of the -g option of markdownlint since the
+  # option did not work as expected.
   git ls-files | grep *.md | xargs docker run --rm \
     -v ${PWD}:/data markdownlint/markdownlint
   # Check backend code

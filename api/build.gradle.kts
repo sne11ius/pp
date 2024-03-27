@@ -53,12 +53,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
     kotlin {
-        ktfmt()
-        ktlint()
         diktat()
     }
     kotlinGradle {
         target("*.gradle.kts")
-        ktlint()
+        diktat()
     }
 }

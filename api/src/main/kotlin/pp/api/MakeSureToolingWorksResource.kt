@@ -16,11 +16,4 @@ class MakeSureToolingWorksResource {
     @GET
     @Produces(TEXT_PLAIN)
     fun hello() = "hello"
-
-    /**
-     * Another test handler to see if spotless will remove the semi before commit
-     */
-    @GET
-    @Produces(TEXT_PLAIN)
-    fun world() = "world";
 }

@@ -20,3 +20,15 @@ jobs:
         uses: actions/checkout@v3
       - name: Run mdl
         uses: actionshub/markdownlint@main
+  lint-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Run spotlessCheck with Gradle
+        run: cd api && ./gradlew spotlessCheck

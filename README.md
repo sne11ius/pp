@@ -21,7 +21,7 @@ Use the following script to install a git hook that checks your changes on each
 commit.
 
   ```bash
-  cat <<EOF | tee .git/hooks/commit-msg
+  cat <<EOF > .git/hooks/commit-msg
   #!/bin/sh
   # Verify commit message conforms to the guidelines
   # see .conform.yaml for the current settings
@@ -38,11 +38,14 @@ commit.
   # run the spotlessCheck with the gradle wrapper
   cd api && ./gradlew spotlessCheck --daemon
   # store the last exit code in a variable
-  RESULT=$?
-  # unstash the unstashed changes
+  SPOTLESS_RESULT=\$?
+  # Now do the same for detekt
+  ./gradlew detekt
+  DETEKT_RESULT=\$?
+  # unstash the stashed changes
   git stash pop -q
-  # return the './gradlew spotlessCheck' exit code
-  exit $RESULT
+  # return the combined spotless and detekt exit code
+  exit \$SPOTLESS_RESULT && \$DETEKT_RESULT
   EOF
   chmod +x .git/hooks/commit-msg
   ```

@@ -21,4 +21,6 @@ policies:
           - "refactor"
           - "perf"
           - "test"
+        scopes:
+          - "deps"
         descriptionLength: 72

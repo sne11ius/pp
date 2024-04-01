@@ -32,3 +32,5 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
       - name: Run spotlessCheck with Gradle
         run: cd api && ./gradlew spotlessCheck
+      - name: Run detekt
+        run: cd api && ./gradlew detekt

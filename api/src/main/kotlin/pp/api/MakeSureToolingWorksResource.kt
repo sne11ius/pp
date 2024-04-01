@@ -12,8 +12,17 @@ import jakarta.ws.rs.core.MediaType.TEXT_PLAIN
 class MakeSureToolingWorksResource {
     /**
      * Test handler returns constant string "hello"
+     *
+     * @return the constant string [HELLO_RESULT]
      */
     @GET
     @Produces(TEXT_PLAIN)
-    fun hello() = "hello"
+    fun hello() = HELLO_RESULT
+
+    companion object {
+        /**
+         * Constant result of the `hello` handler
+         */
+        const val HELLO_RESULT = "hello"
+    }
 }

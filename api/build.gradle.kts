@@ -1,7 +1,7 @@
 import org.gradle.api.JavaVersion.VERSION_21
 
 plugins {
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version "1.9.23"
     kotlin("plugin.allopen") version "1.9.22"
     id("io.quarkus")
     id("com.diffplug.spotless") version "6.25.0"

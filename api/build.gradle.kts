@@ -1,11 +1,11 @@
 import org.gradle.api.JavaVersion.VERSION_21
 
 plugins {
-    kotlin("jvm") version "1.9.22"
-    kotlin("plugin.allopen") version "1.9.22"
-    id("io.quarkus")
-    id("com.diffplug.spotless") version "6.25.0"
-    id("io.gitlab.arturbosch.detekt") version "1.23.6"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.allopen)
+    alias(libs.plugins.quarkus)
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.detekt)
 }
 
 repositories {

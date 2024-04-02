@@ -42,10 +42,12 @@ commit.
   # Now do the same for detekt
   ./gradlew detekt
   DETEKT_RESULT=\$?
+  docker run -it --rm -v "$(pwd):/workdir" ghcr.io/ffurrer2/yamllint:latest .
+  YAML_RESULT=\$?
   # unstash the stashed changes
   git stash pop -q
   # return the combined spotless and detekt exit code
-  exit \$SPOTLESS_RESULT && \$DETEKT_RESULT
+  exit \$SPOTLESS_RESULT && \$DETEKT_RESULT && \$YAML_RESULT
   EOF
   chmod +x .git/hooks/commit-msg
   ```

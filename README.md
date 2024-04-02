@@ -42,12 +42,18 @@ commit.
   # Now do the same for detekt
   ./gradlew detekt
   DETEKT_RESULT=\$?
-  docker run -it --rm -v "$(pwd):/workdir" ghcr.io/ffurrer2/yamllint:latest .
+  docker run --rm -v "$(pwd):/data" cytopia/yamllint:latest --strict .
   YAML_RESULT=\$?
   # unstash the stashed changes
   git stash pop -q
   # return the combined spotless and detekt exit code
-  exit \$SPOTLESS_RESULT && \$DETEKT_RESULT && \$YAML_RESULT
+  if [ \$SPOTLESS_RESULT -ne 0 ]; then
+    exit \$SPOTLESS_RESULT;
+  elif [ \$DETEKT_RESULT -ne 0 ]; then
+    exit \$DETEKT_RESULT;
+  elif [ \$YAML_RESULT -ne 0 ]; then
+    exit \$YAML_RESULT;
+  fi
   EOF
   chmod +x .git/hooks/commit-msg
   ```

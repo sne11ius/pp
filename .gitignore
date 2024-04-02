@@ -1,2 +1,4 @@
 .idea
 .quarkus
+api/.gradle
+api/build

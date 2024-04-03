@@ -1,0 +1,29 @@
+## Stage 1 : build with maven builder image with native capabilities
+FROM quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21 AS build
+USER root
+RUN microdnf install findutils
+# upx seems not to be installed in the base image
+RUN curl --location --output upx-4.2.3-amd64_linux.tar.xz "https://github.com/upx/upx/releases/download/v4.2.3/upx-4.2.3-amd64_linux.tar.xz" && \
+    tar -xJf upx-4.2.3-amd64_linux.tar.xz && \
+    cp upx-4.2.3-amd64_linux/upx /bin/
+COPY --chown=quarkus:quarkus gradlew /code/gradlew
+COPY --chown=quarkus:quarkus gradle /code/gradle
+COPY --chown=quarkus:quarkus build.gradle.kts /code/
+COPY --chown=quarkus:quarkus settings.gradle.kts /code/
+COPY --chown=quarkus:quarkus gradle.properties /code/
+USER quarkus
+WORKDIR /code
+COPY src /code/src
+RUN ./gradlew build -Dquarkus.package.type=native
+# Quarkus settings like "quarkus.native.compression.additional-args" seemed to have no effect - maybe we applied them
+# wrong. But its just as easy to run upx by ourselves
+RUN upx --ultra-brute /code/build/*-runner
+
+## Stage 2 : create the docker final image
+FROM quay.io/quarkus/quarkus-distroless-image:2.0
+WORKDIR /work/
+COPY --from=build /code/build/*-runner /work/application
+# RUN chmod 775 /work
+EXPOSE 8080
+USER nonroot
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]

@@ -2,6 +2,15 @@
 
 This is the API part of pp.
 
+## Native build
+
+To build a docker image run the following command. This this make take some
+time, but the resulting image should be small (about 40mb).
+
+```shell
+docker build -f src/main/docker/Dockerfile.distroless -t pp/api .
+```
+
 ## Running the application in dev mode
 
 You can run the application in dev mode that enables live coding using:

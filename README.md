@@ -60,6 +60,8 @@ commit.
 
 ## Server
 
+See [server readme](./api/README.md) for a hint on how to build a docker image.
+
 - No persistence
 - No UI
 - Websocket API

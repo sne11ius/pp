@@ -1,0 +1,54 @@
+linters:
+  enable:
+    - bodyclose
+    - dogsled
+    - dupword
+    - durationcheck
+    - errchkjson
+    - exportloopref
+    - gocritic
+    - gocyclo
+    - gofumpt
+    - goimports
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - megacheck
+    - misspell
+    - nilerr
+    - nolintlint
+    - perfsprint
+    - prealloc
+    - predeclared
+    - reassign
+    - revive
+    - staticcheck
+    - stylecheck
+    - tenv
+    - thelper
+    - tparallel
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - usestdlibvars
+    - vet
+    - wastedassign
+  disable:
+    - errcheck
+run:
+  timeout: 5m
+linters-settings:
+  gocyclo:
+    min-complexity: 16
+  lll:
+    line-length: 120
+issues:
+  exclude-use-default: false
+  exclude:
+    - parameter .* always receives
+  exclude-rules:
+  max-issues-per-linter: 0
+  max-same-issues: 0

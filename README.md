@@ -25,24 +25,26 @@ commit.
   #!/bin/sh
   # Verify commit message conforms to the guidelines
   # see .conform.yaml for the current settings
-  docker run --rm -v $PWD:/src -w /src \
+  docker run --rm -v \${PWD}:/src -w /src \
     ghcr.io/siderolabs/conform:v0.1.0-alpha.22 enforce --commit-msg-file \$1
-  # Verify markdown files conform to the guidelines
-  # We use git ls-files instead of the -g option of markdownlint since the
-  # option did not work as expected.
-  git ls-files | grep *.md | xargs docker run --rm \
-    -v ${PWD}:/data markdownlint/markdownlint
-  # Check backend code
   # stash any unstaged changes
   git stash -q --keep-index
-  # run the spotlessCheck with the gradle wrapper
+  # Verify markdown files conform to the guidelines
+  docker run --rm -v \${PWD}:/data markdownlint/markdownlint .
+  # Check backend code
+  # run spotlessCheck via gradle
+  echo Checking api code in \$PWD
   cd api && ./gradlew spotlessCheck --daemon
-  # store the last exit code in a variable
   SPOTLESS_RESULT=\$?
   # Now do the same for detekt
   ./gradlew detekt
   DETEKT_RESULT=\$?
-  docker run --rm -v "$(pwd):/data" cytopia/yamllint:latest --strict .
+  cd ../client
+  echo Checking client code in \${PWD}
+  docker run  --rm -v "\${PWD}:/workspace" -w "/workspace/." golangci/golangci-lint golangci-lint run --fix
+  GOLANGCI_RESULT=\$?
+  cd ..
+  docker run --rm -v "\${PWD}:/data" cytopia/yamllint:latest --strict .
   YAML_RESULT=\$?
   # unstash the stashed changes
   git stash pop -q
@@ -51,6 +53,8 @@ commit.
     exit \$SPOTLESS_RESULT;
   elif [ \$DETEKT_RESULT -ne 0 ]; then
     exit \$DETEKT_RESULT;
+  elif [ \$GOLANGCI_RESULT -ne 0 ]; then
+    exit \$GOLANGCI_RESULT;
   elif [ \$YAML_RESULT -ne 0 ]; then
     exit \$YAML_RESULT;
   fi

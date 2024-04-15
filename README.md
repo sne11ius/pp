@@ -13,52 +13,17 @@ commits/pushes are checked by github actions to verify every change conforms to
 our development guidelines. To make sure your changes can be merged and land in
 the next release, consider running the checks on each commit.
 
-[docker](https://www.docker.com/) is required for the suggested commit-hook. We
-use docker during development so we don't need to install non-essential
-tools locally on each dev machine.
+An example commit hook can be found in [.commit-msg](.commit-msg). The script
+uses [docker](https://www.docker.com/) and [gradle](https://gradle.org/). But
+since these tools are also required to build the software itself, this should be
+fine.
 
 Use the following script to install a git hook that checks your changes on each
 commit.
 
   ```bash
-  cat <<EOF > .git/hooks/commit-msg
-  #!/bin/sh
-  # Verify commit message conforms to the guidelines
-  # see .conform.yaml for the current settings
-  docker run --rm -v \${PWD}:/src -w /src \
-    ghcr.io/siderolabs/conform:v0.1.0-alpha.22 enforce --commit-msg-file \$1
-  # stash any unstaged changes
-  git stash -q --keep-index
-  # Verify markdown files conform to the guidelines
-  docker run --rm -v \${PWD}:/data markdownlint/markdownlint .
-  # Check backend code
-  # run spotlessCheck via gradle
-  echo Checking api code in \$PWD
-  cd api && ./gradlew spotlessCheck --daemon
-  SPOTLESS_RESULT=\$?
-  # Now do the same for detekt
-  ./gradlew detekt
-  DETEKT_RESULT=\$?
-  cd ../client
-  echo Checking client code in \${PWD}
-  docker run  --rm -v "\${PWD}:/workspace" -w "/workspace/." golangci/golangci-lint golangci-lint run --fix
-  GOLANGCI_RESULT=\$?
-  cd ..
-  docker run --rm -v "\${PWD}:/data" cytopia/yamllint:latest --strict .
-  YAML_RESULT=\$?
-  # unstash the stashed changes
-  git stash pop -q
-  # return the combined spotless and detekt exit code
-  if [ \$SPOTLESS_RESULT -ne 0 ]; then
-    exit \$SPOTLESS_RESULT;
-  elif [ \$DETEKT_RESULT -ne 0 ]; then
-    exit \$DETEKT_RESULT;
-  elif [ \$GOLANGCI_RESULT -ne 0 ]; then
-    exit \$GOLANGCI_RESULT;
-  elif [ \$YAML_RESULT -ne 0 ]; then
-    exit \$YAML_RESULT;
-  fi
-  EOF
+  rm -f .git/hooks/commit-msg
+  cp ./.commit-msg.sh .git/hooks/commit-msg
   chmod +x .git/hooks/commit-msg
   ```
 

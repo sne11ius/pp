@@ -1,6 +1,7 @@
 name: Check
 
-on: [pull_request]
+on:
+  - pull_request
 
 jobs:
   lint-commit:
@@ -20,6 +21,15 @@ jobs:
         uses: actions/checkout@v3
       - name: Run mdl
         uses: actionshub/markdownlint@main
+  lint-shellscripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          ignore_names: gradlew
   lint-yaml:
     runs-on: ubuntu-latest
     steps:

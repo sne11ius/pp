@@ -5,18 +5,28 @@
 docker run --rm -v "${PWD}":/src -w /src \
   ghcr.io/siderolabs/conform:v0.1.0-alpha.22 enforce --commit-msg-file "$1"
 
-# stash any unstaged changes
+# stash any unstaged changes because we don't want to check any changes that are not part of this commit
 git stash -q --keep-index
 
-# Verify markdown files conform to the guidelines
+# Lint markdown files
 git ls-files | grep ".*\.md$" | xargs docker run --rm \
   -v "${PWD}":/data markdownlint/markdownlint
 MDL_RESULT=$?
 
-# Verify markdown files conform to the guidelines
+# Lint shell scripts
 git ls-files | grep ".*\.sh$" | xargs docker run --rm \
   -v "${PWD}":/mnt koalaman/shellcheck:stable
 SHELLCHECK_RESULT=$?
+
+# Lint yaml files
+docker run --rm -v "${PWD}:/data" cytopia/yamllint:latest --strict .
+YAML_RESULT=$?
+
+# Lint docker files
+git ls-files | \
+  grep '.*Dockerfile.*' | \
+  xargs -I'{}' docker run --rm -i -v "${PWD}"/{}:/{} -e HADOLINT_FAILURE_THRESHOLD=style hadolint/hadolint hadolint {}
+HADOLINT_RESULT=$?
 
 # Check backend code
 # run spotlessCheck via gradle
@@ -24,7 +34,7 @@ echo Checking api code in "${PWD}"
 cd api && ./gradlew spotlessCheck --daemon
 SPOTLESS_RESULT=$?
 
-# Now do the same for detekt
+# Now run detekt
 ./gradlew detekt
 DETEKT_RESULT=$?
 
@@ -37,10 +47,6 @@ GOLANGCI_RESULT=$?
 
 cd ..
 
-# Check yaml files
-docker run --rm -v "${PWD}:/data" cytopia/yamllint:latest --strict .
-YAML_RESULT=$?
-
 # unstash the stashed changes
 git stash pop -q
 
@@ -52,6 +58,9 @@ if [ $MDL_RESULT -ne 0 ]; then
 elif [ $SHELLCHECK_RESULT -ne 0 ]; then
     printf "%bCheck Failed for shellcheck\n" "${RED}"
     exit $SHELLCHECK_RESULT;
+elif [ $HADOLINT_RESULT -ne 0 ]; then
+    printf "%bCheck Failed for hadolint\n" "${RED}"
+    exit $HADOLINT_RESULT;
 elif [ $SPOTLESS_RESULT -ne 0 ]; then
     printf "%bCheck Failed for spotless\n" "${RED}"
     exit $SPOTLESS_RESULT;

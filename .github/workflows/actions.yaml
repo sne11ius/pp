@@ -40,6 +40,16 @@ jobs:
         with:
           config_file: .yamllint.yaml
           strict: true
+  lint-dockerfiles:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile*
+          recursive: true
+          failure-threshold: style
   lint-api:
     runs-on: ubuntu-latest
     steps:

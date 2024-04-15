@@ -2,7 +2,7 @@
 kotlin = "1.9.23"
 spotless = "6.25.0"
 detekt = "1.23.6"
-quarkus = "3.9.1"
+quarkus = "3.9.3"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

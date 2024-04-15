@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 # Verify commit message conforms to the guidelines
 # see .conform.yaml for the current settings

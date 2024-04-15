@@ -13,7 +13,7 @@ commits/pushes are checked by github actions to verify every change conforms to
 our development guidelines. To make sure your changes can be merged and land in
 the next release, consider running the checks on each commit.
 
-An example commit hook can be found in [.commit-msg](.commit-msg). The script
+An example commit hook can be found in [commit-hook.sh](commit-hook.sh). The script
 uses [docker](https://www.docker.com/) and [gradle](https://gradle.org/). But
 since these tools are also required to build the software itself, this should be
 fine.
@@ -23,7 +23,7 @@ commit.
 
   ```bash
   rm -f .git/hooks/commit-msg
-  cp ./.commit-msg.sh .git/hooks/commit-msg
+  cp ./commit-hook.sh .git/hooks/commit-msg
   chmod +x .git/hooks/commit-msg
   ```
 

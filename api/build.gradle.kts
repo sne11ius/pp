@@ -1,6 +1,7 @@
 import org.gradle.api.JavaVersion.VERSION_21
 
 plugins {
+    jacoco
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.allopen)
     alias(libs.plugins.quarkus)
@@ -36,8 +37,17 @@ java {
     targetCompatibility = VERSION_21
 }
 
-tasks.withType<Test> {
+tasks.test {
     systemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager")
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required = true
+        html.required = false
+    }
 }
 
 allOpen {

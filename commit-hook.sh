@@ -42,7 +42,7 @@ DETEKT_RESULT=$?
 cd ../client || exit 1
 echo Checking client code in "${PWD}"
 docker run  --rm -v "${PWD}:/workspace" -w "/workspace/." \
-  golangci/golangci-lint golangci-lint run --fix
+  golangci/golangci-lint golangci-lint run
 GOLANGCI_RESULT=$?
 
 cd ..

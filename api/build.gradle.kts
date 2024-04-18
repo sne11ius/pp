@@ -35,7 +35,12 @@ dependencies {
 }
 
 group = "pp"
+
+// Please do not change the following marker comments as they are used by the "release-please" github action.
+// See https://github.com/googleapis/release-please/blob/main/docs/customizing.md#updating-arbitrary-files
+// x-release-please-start-version
 version = "0.0.0"
+// x-release-please-end
 
 java {
     sourceCompatibility = VERSION_21

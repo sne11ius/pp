@@ -1,0 +1,21 @@
+{
+  "packages": {
+    ".": {
+      "package-name": "pp",
+      "release-type": "simple"
+    }
+  },
+  "plugins": [
+    {
+      "type": "linked-versions",
+      "groupName": "my group",
+      "components": [
+        "api",
+        "client"
+      ]
+    },
+    {
+      "type": "sentence-case"
+    }
+  ]
+}

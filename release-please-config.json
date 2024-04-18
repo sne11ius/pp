@@ -1,0 +1,39 @@
+{
+  "include-component-in-tag": false,
+  "packages": {
+    ".": {
+      "compontents": ["api", "client"],
+      "package-name": "pp",
+      "release-type": "simple"
+    },
+    "api": {
+      "component": "api",
+      "package-name": "api",
+      "release-type": "simple",
+      "extra-files": [
+        "build.gradle.kts"
+      ]
+    },
+    "client": {
+      "component": "client",
+      "package-name": "client",
+      "release-type": "go",
+      "extra-files": [
+        "cmd/root.go"
+      ]
+    }
+  },
+  "plugins": [
+    {
+      "type": "linked-versions",
+      "groupName": "pp",
+      "components": [
+        "api",
+        "client"
+      ]
+    },
+    {
+      "type": "sentence-case"
+    }
+  ]
+}

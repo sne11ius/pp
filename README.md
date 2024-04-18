@@ -5,6 +5,8 @@ Simple client/server planning poker
 This project is in early development, so the documentation is geared towards
 developers.
 
+[![codecov](https://codecov.io/gh/sne11ius/pp/graph/badge.svg?token=PDADRFW5QB)](https://codecov.io/gh/sne11ius/pp)
+
 ## Development
 
 ### Prerequisites

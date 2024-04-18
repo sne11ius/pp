@@ -1,0 +1,40 @@
+{
+  "include-component-in-tag": false,
+  "initial-version": "0.0.1",
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "packages": {
+    ".": {
+      "package-name": "pp",
+      "release-type": "simple"
+    },
+    "api": {
+      "package-name": "api",
+      "release-type": "simple",
+      "extra-files": [
+        "build.gradle.kts"
+      ]
+    },
+    "client": {
+      "package-name": "client",
+      "release-type": "go",
+      "extra-files": [
+        "cmd/root.go"
+      ]
+    }
+  },
+  "plugins": [
+    {
+      "type": "linked-versions",
+      "groupName": "pp",
+      "components": [
+        "api",
+        "client"
+      ]
+    },
+    {
+      "type": "sentence-case"
+    }
+  ],
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+}

@@ -1,0 +1,31 @@
+{
+  "packages": {
+    "api": {
+      "package-name": "api",
+      "release-type": "simple",
+      "extra-files": [
+        "api/build.gradle.kts"
+      ]
+    },
+    "client": {
+      "package-name": "client",
+      "release-type": "go",
+      "extra-files": [
+        "client/cmd/root.go"
+      ]
+    }
+  },
+  "plugins": [
+    {
+      "type": "linked-versions",
+      "groupName": "pp",
+      "components": [
+        "api",
+        "client"
+      ]
+    },
+    {
+      "type": "sentence-case"
+    }
+  ]
+}

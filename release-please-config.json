@@ -1,0 +1,25 @@
+{
+  "packages": {
+    "api": {
+      "package-name": "api",
+      "release-type": "simple"
+    },
+    "client": {
+      "package-name": "client",
+      "release-type": "go"
+    }
+  },
+  "plugins": [
+    {
+      "type": "linked-versions",
+      "groupName": "pp",
+      "components": [
+        "api",
+        "client"
+      ]
+    },
+    {
+      "type": "sentence-case"
+    }
+  ]
+}

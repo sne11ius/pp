@@ -6,7 +6,7 @@ docker run --rm -v "${PWD}":/src -w /src \
   ghcr.io/siderolabs/conform:v0.1.0-alpha.22 enforce --commit-msg-file "$1"
 
 # stash any unstaged changes because we don't want to check any changes that are not part of this commit
-git stash -q --keep-index
+git stash -q --keep-index --include-untracked
 
 # Lint markdown files
 git ls-files | grep ".*\.md$" | xargs docker run --rm \

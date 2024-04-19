@@ -20,17 +20,22 @@ val quarkusPlatformVersion: String by project
 
 dependencies {
     implementation(enforcedPlatform("$quarkusPlatformGroupId:$quarkusPlatformArtifactId:$quarkusPlatformVersion"))
+    implementation("io.quarkus:quarkus-info")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-resteasy-reactive")
+    implementation("io.quarkus:quarkus-rest-jackson")
     implementation("io.quarkus:quarkus-websockets")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.quarkus:quarkus-arc")
     testImplementation("io.quarkus:quarkus-junit5")
+    testImplementation("io.quarkus:quarkus-junit5-mockito")
+    testImplementation(libs.hamcrest.json)
+    testImplementation(libs.mockito.kotlin)
     testImplementation("io.rest-assured:rest-assured")
 }
 
 group = "pp"
-version = "1.0.0-SNAPSHOT"
+version = "0.0.0"
 
 java {
     sourceCompatibility = VERSION_21

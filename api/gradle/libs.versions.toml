@@ -3,6 +3,8 @@ kotlin = "1.9.23"
 spotless = "6.25.0"
 detekt = "1.23.6"
 quarkus = "3.9.4"
+hamcrest-json = "0.3"
+mockito-kotlin = "5.3.1"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -10,3 +12,7 @@ kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "ko
 quarkus = { id = "io.quarkus", version.ref = "quarkus" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+
+[libraries]
+hamcrest-json = { module = "uk.co.datumedge:hamcrest-json", version.ref = "hamcrest-json" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }

@@ -5,9 +5,34 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"runtime/debug"
 
 	"github.com/spf13/cobra"
 )
+
+// Please do not change the following marker comments as they are used by the "release-please" github action.
+// See https://github.com/googleapis/release-please/blob/main/docs/customizing.md#updating-arbitrary-files
+// x-release-please-start-version
+var version = "0.0.0"
+
+// x-release-please-end
+
+var commit = func() string {
+	if info, ok := debug.ReadBuildInfo(); ok {
+		for _, setting := range info.Settings {
+			if setting.Key == "vcs.revision" {
+				return setting.Value[0:7]
+			}
+		}
+	}
+	return ""
+}()
+
+// Print version and commit hash - including link to github
+func printHeader() {
+	fmt.Printf("pp version: %s\n", version)
+	fmt.Printf("Built from commit %s - see https://github.com/sne11ius/pp/commit/%s\n", commit, commit)
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -17,8 +42,11 @@ var rootCmd = &cobra.Command{
 Simply running pp will connect to the default server
 and create a new random room.
 Running pp --room "my room id" will join the room
-with the given id`,
+with the given id.` +
+		"\n\nYour are running version " + version +
+		"\nBuilt from commit " + commit + " - see https://github.com/sne11ius/pp/commit/" + commit,
 	Run: func(_ *cobra.Command, _ []string) {
+		printHeader()
 		if len(roomID) != 0 {
 			fmt.Printf("Will join room with id: %s\n", roomID)
 		} else {

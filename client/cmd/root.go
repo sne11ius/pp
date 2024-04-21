@@ -13,7 +13,7 @@ import (
 // Please do not change the following marker comments as they are used by the "release-please" github action.
 // See https://github.com/googleapis/release-please/blob/main/docs/customizing.md#updating-arbitrary-files
 // x-release-please-start-version
-var version = "0.0.0"
+var version = "0.0.1"
 
 // x-release-please-end
 

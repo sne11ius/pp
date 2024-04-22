@@ -39,7 +39,7 @@ group = "pp"
 // Please do not change the following marker comments as they are used by the "release-please" github action.
 // See https://github.com/googleapis/release-please/blob/main/docs/customizing.md#updating-arbitrary-files
 // x-release-please-start-version
-version = "0.0.2"
+version = "0.0.3"
 // x-release-please-end
 
 java {

@@ -15,9 +15,8 @@ fi
 git stash -q --keep-index --include-untracked
 
 # Lint markdown files
-git ls-files | grep ".*\.md$" | xargs docker run --rm \
-  -v "${PWD}":/data markdownlint/markdownlint
-MDL_RESULT=$?
+docker run -v "${PWD}":/workdir davidanson/markdownlint-cli2 "**/*.md"
+MD_RESULT=$?
 
 # Lint shell scripts
 git ls-files | grep ".*\.sh$" | xargs docker run --rm \
@@ -58,9 +57,9 @@ git stash pop -q
 
 # Check exit codes
 RED='\033[0;31m'
-if [ $MDL_RESULT -ne 0 ]; then
+if [ $MD_RESULT -ne 0 ]; then
     printf "%bCheck Failed for markdown\n" "${RED}"
-    exit $MDL_RESULT;
+    exit $MD_RESULT;
 elif [ $SHELLCHECK_RESULT -ne 0 ]; then
     printf "%bCheck Failed for shellcheck\n" "${RED}"
     exit $SHELLCHECK_RESULT;

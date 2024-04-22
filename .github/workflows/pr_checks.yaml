@@ -20,7 +20,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
       - name: Run mdl
-        uses: actionshub/markdownlint@main
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: '**/*.md'
   lint-shellscripts:
     runs-on: ubuntu-latest
     steps:

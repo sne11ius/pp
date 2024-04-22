@@ -69,27 +69,27 @@ See [server readme](./api/README.md) for a hint on how to build a docker image.
   obviously)
 - Possible settings include
 
-   - Server to use
-   - Default room id
-   - username
-   - Some kind of "usertype", to distinguish "voter" vs "observer"
+  - Server to use
+  - Default room id
+  - username
+  - Some kind of "usertype", to distinguish "voter" vs "observer"
 
 - Written in golang or rust
 - There are some known libs from the golangiverse we could use:
 
-   - [tview](https://github.com/rivo/tview) for TUI
-   - [viper](https://github.com/spf13/viper) for configuration
+  - [tview](https://github.com/rivo/tview) for TUI
+  - [viper](https://github.com/spf13/viper) for configuration
 
 ## Meta
 
 - Go wild with commit hooks and linters:
 
-   - Markdown files
-   - Code files (eg. `detekt`, `ktlint`, for kotlin. No idea what the
-     golang/rust ppl do)
-      - Side project: create a native binary exe for detekt, since running jvm
-        stuff on every commit is the worst
-   - Commit msgs - enforce conventional commits
+  - Markdown files
+  - Code files (eg. `detekt`, `ktlint`, for kotlin. No idea what the
+    golang/rust ppl do)
+    - Side project: create a native binary exe for detekt, since running jvm
+      stuff on every commit is the worst
+  - Commit msgs - enforce conventional commits
 
 - Version numbers, release notes auto generated from landed commits.
 - Every commit should strive for perfection

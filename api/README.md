@@ -23,7 +23,7 @@ You can run the application in dev mode that enables live coding using:
 ./gradlew quarkusDev
 ```
 
-> **_NOTE:_**  Quarkus ships with a Dev UI, which is available in dev mode only
+> **NOTE:**  Quarkus ships with a Dev UI, which is available in dev mode only
 > at [localhost](http://localhost:8080/q/dev/).
 
 ## Packaging and running
@@ -35,19 +35,19 @@ The application can be packaged using:
 ```
 
 It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the
+Be aware that it’s not an **über-jar** as the dependencies are copied into the
 `build/quarkus-app/lib/` directory.
 
 The application is now runnable using
 `java -jar build/quarkus-app/quarkus-run.jar`.
 
-If you want to build an _über-jar_, execute the following command:
+If you want to build an **über-jar**, execute the following command:
 
 ```shell script
 ./gradlew build -Dquarkus.package.type=uber-jar
 ```
 
-The application, packaged as an _über-jar_, is now runnable using
+The application, packaged as an **über-jar**, is now runnable using
 `java -jar build/*-runner.jar`.
 
 ## Creating a native executable

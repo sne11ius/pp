@@ -24,7 +24,7 @@ jobs:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
       - name: Check out the repo
         if: ${{ steps.release.outputs.release_created }}
-        uses: actions/checkout@v4      -
+        uses: actions/checkout@v4
       - name: Set up QEMU
         if: ${{ steps.release.outputs.release_created }}
         uses: docker/setup-qemu-action@v3

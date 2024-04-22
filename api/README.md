@@ -7,8 +7,12 @@ This is the API part of pp.
 To build a docker image run the following command. This this make take some
 time, but the resulting image should be small (about 40mb).
 
+*Important*: This command must be run in the root of this repo, *not* in the
+`api` directory. That's because the build needs the `.git` directory to extract
+the git hash of the current commit.
+
 ```shell
-docker build -f src/main/docker/Dockerfile.distroless -t pp/api .
+docker build -f api/src/main/docker/Dockerfile.distroless -t pp/api .
 ```
 
 ## Running the application in dev mode

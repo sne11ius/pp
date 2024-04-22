@@ -68,3 +68,7 @@ in a container using:
 
 You can then execute your native executable with:
 `./build/pp-server-1.0.0-SNAPSHOT-runner`
+
+## License
+
+Licensed under the EUPL. See [LICENSE](../LICENSE) file.

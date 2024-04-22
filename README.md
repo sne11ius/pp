@@ -94,3 +94,7 @@ See [server readme](./api/README.md) for a hint on how to build a docker image.
 - Version numbers, release notes auto generated from landed commits.
 - Every commit should strive for perfection
 - Exceptional documentation,
+
+## License
+
+Licensed under the EUPL. See [LICENSE](./LICENSE) file.

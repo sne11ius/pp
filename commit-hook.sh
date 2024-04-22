@@ -4,6 +4,12 @@
 # see .conform.yaml for the current settings
 docker run --rm -v "${PWD}":/src -w /src \
   ghcr.io/siderolabs/conform:v0.1.0-alpha.22 enforce --commit-msg-file "$1"
+CONFORM_RESULT=$?
+
+if [ $CONFORM_RESULT -ne 0 ]; then
+    echo Check Failed for commit message
+    exit $CONFORM_RESULT;
+fi
 
 # stash any unstaged changes because we don't want to check any changes that are not part of this commit
 git stash -q --keep-index --include-untracked

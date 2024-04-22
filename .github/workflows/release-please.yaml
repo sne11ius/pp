@@ -3,9 +3,14 @@ on:
     branches:
       - main
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 permissions:
   contents: write
   pull-requests: write
+  packages: write
 
 name: release-please
 
@@ -13,6 +18,49 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: google-github-actions/release-please-action@v4
+      - name: release
+        uses: google-github-actions/release-please-action@v4
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+      - name: Check out the repo
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/checkout@v4      -
+      - name: Set up QEMU
+        if: ${{ steps.release.outputs.release_created }}
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        if: ${{ steps.release.outputs.release_created }}
+        uses: docker/setup-buildx-action@v3
+      - name: Log in to the Container registry
+        if: ${{ steps.release.outputs.release_created }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        if: ${{ steps.release.outputs.release_created }}
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Build and push Docker image
+        if: ${{ steps.release.outputs.release_created }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: api/src/main/docker/Dockerfile.distroless
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+      - uses: wangyoucao577/go-release-action@v1.24
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_tag: ${{ steps.release.outputs.tag_name }}
+          goos: linux
+          goarch: amd64
+          binary_name: pp
+          asset_name: pp
+          extra_files: LICENSE README.md
+          executable_compression: upx

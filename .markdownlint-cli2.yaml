@@ -1,0 +1,10 @@
+gitignore: true
+
+config:
+  # MD024/no-duplicate-heading/no-duplicate-header - Multiple headings with the same content
+  MD024:
+    # Only check sibling headings
+    siblings_only: true
+
+"$schema":
+  "https://raw.githubusercontent.com/DavidAnson/markdownlint-cli2/main/schema/markdownlint-cli2-config-schema.json"

@@ -3,10 +3,14 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"os/exec"
 	"strings"
 	"testing"
+
+	"github.com/gorilla/websocket"
 )
 
 // This way of testing the main func heavily inspired by this stackoverflow answer:
@@ -34,7 +38,30 @@ func TestMain(m *testing.M) {
 	os.Exit(exitCode)
 }
 
+var upgrader = websocket.Upgrader{}
+
+func echo(w http.ResponseWriter, r *http.Request) {
+	c, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		return
+	}
+	defer c.Close()
+	for {
+		mt, message, err := c.ReadMessage()
+		if err != nil {
+			break
+		}
+		err = c.WriteMessage(mt, message)
+		if err != nil {
+			break
+		}
+	}
+}
+
 func TestCallingMain(tester *testing.T) {
+	testServer := httptest.NewServer(http.HandlerFunc(echo))
+	defer testServer.Close()
+
 	// This was adapted from https://golang.org/src/flag/flag_test.go; line 596-657 at the time.
 	// This is called recursively, because we will have this test call itself
 	// in a sub-command with the environment variable `GO_CHILD_FLAG` set.
@@ -57,8 +84,8 @@ func TestCallingMain(tester *testing.T) {
 		want int
 		args []string
 	}{
-		{"roomFlagShort", 0, []string{"-r", "my-shortflag-id"}},
-		{"roomFlagLong", 0, []string{"--room", "my-id"}},
+		{"roomFlagShort", 0, []string{"-r", "my-shortflag-id", "-s", testServer.URL}},
+		{"roomFlagLong", 0, []string{"--room", "my-id", "-s", testServer.URL}},
 		{"helpFlag", 0, []string{"-h"}},
 		{"unknownFlagShort", 1, []string{"-u"}},
 		{"unknownFlagLong", 1, []string{"--unknown", "flag"}},

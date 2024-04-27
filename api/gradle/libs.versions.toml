@@ -4,7 +4,9 @@ spotless = "6.25.0"
 detekt = "1.23.6"
 quarkus = "3.9.4"
 hamcrest-json = "0.3"
-mockito-kotlin = "5.3.1"
+mockito = "5.3.1"
+mockito-inline = "5.2.0"
+data-faker = "2.2.2"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -15,4 +17,6 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
 [libraries]
 hamcrest-json = { module = "uk.co.datumedge:hamcrest-json", version.ref = "hamcrest-json" }
-mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito-inline" }
+datafaker = { module = "net.datafaker:datafaker", version.ref = "data-faker" }

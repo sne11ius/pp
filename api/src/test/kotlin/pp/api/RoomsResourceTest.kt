@@ -3,8 +3,7 @@ package pp.api
 import io.quarkus.test.common.http.TestHTTPEndpoint
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.RestAssured.given
-import io.restassured.http.ContentType.JSON
-import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.Matchers.matchesPattern
 import org.junit.jupiter.api.Test
 
 /**
@@ -14,13 +13,16 @@ import org.junit.jupiter.api.Test
 @TestHTTPEndpoint(RoomsResource::class)
 class RoomsResourceTest {
     @Test
-    fun testGetRooms() {
+    fun testCreateRandomRoom() {
+        val locationRegex =
+            "^ws://.*rooms/[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$"
         given()
+            .redirects()
+            .follow(false)
             .`when`()
-            .get()
+            .get("/new")
             .then()
-            .statusCode(200)
-            .contentType(JSON)
-            .body(`is`("[]"))
+            .statusCode(307)
+            .header("Location", matchesPattern(locationRegex))
     }
 }

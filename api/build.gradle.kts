@@ -27,10 +27,12 @@ dependencies {
     implementation("io.quarkus:quarkus-websockets")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.quarkus:quarkus-arc")
+    implementation(libs.datafaker)
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.quarkus:quarkus-junit5-mockito")
     testImplementation(libs.hamcrest.json)
     testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.mockito.inline)
     testImplementation("io.rest-assured:rest-assured")
 }
 

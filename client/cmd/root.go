@@ -4,9 +4,14 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+	"net/url"
 	"os"
 	"runtime/debug"
+	"strings"
 
+	"github.com/sne11ius/pp/client/ppwsclient"
 	"github.com/spf13/cobra"
 )
 
@@ -45,17 +50,43 @@ Running pp --room "my room id" will join the room
 with the given id.` +
 		"\n\nYour are running version " + version +
 		"\nBuilt from commit " + commit + " - see https://github.com/sne11ius/pp/commit/" + commit,
+	PersistentPreRun: func(_ *cobra.Command, _ []string) {
+		readGlobalConfig()
+	},
 	Run: func(_ *cobra.Command, _ []string) {
 		printHeader()
-		if len(roomID) != 0 {
-			fmt.Printf("Will join room with id: %s\n", roomID)
-		} else {
-			fmt.Println("Will join a random room")
+		roomWebsocketURL := getWsURL()
+		client := ppwsclient.New(roomWebsocketURL)
+		err := client.Start()
+		if err != nil {
+			log.Fatalf("could not start client: %v", err)
 		}
 	},
 }
 
-var roomID string
+func getWsURL() string {
+	var roomURL string
+	if len(GlobalConfig.RoomID) != 0 {
+		roomURL = GlobalConfig.ServerURL + "/rooms/" + url.QueryEscape(GlobalConfig.RoomID)
+		return strings.Replace(roomURL, "http", "ws", 1)
+	}
+	roomURL = GlobalConfig.ServerURL + "/rooms/new"
+	client := &http.Client{
+		CheckRedirect: func(_ *http.Request, _ []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
+	res, err := client.Get(roomURL)
+	if err != nil {
+		log.Fatalf("error making http request: %s\n", err)
+	}
+	defer res.Body.Close()
+	var location string
+	if res.StatusCode == http.StatusTemporaryRedirect {
+		location = res.Header.Get("Location")
+	}
+	return location
+}
 
 // Execute runs the main program by invoking the rootCmd. Any error will result in an os.Exit(1)
 func Execute() {
@@ -68,5 +99,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&roomID, "room", "r", "", "room id")
+	if err := configInit(); err != nil {
+		panic(err.Error())
+	}
 }

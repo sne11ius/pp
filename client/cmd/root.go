@@ -4,12 +4,17 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"os/signal"
 	"runtime/debug"
 	"strings"
+	"syscall"
+
+	"github.com/sne11ius/pp/client/tui"
 
 	"github.com/sne11ius/pp/client/ppwsclient"
 	"github.com/spf13/cobra"
@@ -56,10 +61,28 @@ with the given id.` +
 	Run: func(_ *cobra.Command, _ []string) {
 		printHeader()
 		roomWebsocketURL := getWsURL()
-		client := ppwsclient.New(roomWebsocketURL)
-		err := client.Start()
-		if err != nil {
-			log.Fatalf("could not start client: %v", err)
+		ui := tui.New()
+		client := ppwsclient.New(roomWebsocketURL, ui.Room, ui.OnUpdate)
+		// Having an actual ui and websocket client run doesn't work in tests since there is no one to stop the app
+		if os.Getenv("SUB_CMD_FLAGS") == "" {
+			c := make(chan os.Signal, 1)
+			signal.Notify(c, os.Interrupt, syscall.SIGINT)
+			var err error
+			go func() {
+				<-c
+				err := client.Stop()
+				if err != nil {
+					return
+				}
+				ui.App.Stop()
+			}()
+			go func() {
+				err = client.Start()
+			}()
+			err = ui.App.Run()
+			if err != nil {
+				log.Fatalf("Could not do stuff: %v", err)
+			}
 		}
 	},
 }
@@ -76,11 +99,16 @@ func getWsURL() string {
 			return http.ErrUseLastResponse
 		},
 	}
-	res, err := client.Get(roomURL)
+	res, err := client.Get(roomURL) //nolint:bodyclose // its in the defer below
 	if err != nil {
 		log.Fatalf("error making http request: %s\n", err)
 	}
-	defer res.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Fatalf("error closing body: %s\n", err)
+		}
+	}(res.Body)
 	var location string
 	if res.StatusCode == http.StatusTemporaryRedirect {
 		location = res.Header.Get("Location")

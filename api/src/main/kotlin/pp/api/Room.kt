@@ -26,6 +26,14 @@ class Room(
     }
 
     /**
+     * Sends the current room state to all connected clients
+     */
+    fun broadcastState() {
+        val state = RoomState(this)
+        users.forEach { it.sendObject(state) }
+    }
+
+    /**
      * A room is empty if it contains no users
      */
     fun isEmpty(): Boolean = users.isEmpty()

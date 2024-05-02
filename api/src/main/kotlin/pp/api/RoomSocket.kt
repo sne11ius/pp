@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets
  * @param rooms
  */
 @ApplicationScoped
-@ServerEndpoint("/rooms/{roomId}")
+@ServerEndpoint("/rooms/{roomId}", encoders = [JsonEncoder::class])
 class RoomSocket(
     private val rooms: Rooms,
 ) {

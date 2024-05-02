@@ -42,7 +42,6 @@ class Rooms {
     fun remove(session: Session) {
         get(session)?.let { (room, user) ->
             Log.info("User ${user.username} left room ${room.roomId}")
-            room.broadcast("${user.username} gave up")
             update(room - session)
         }
     }
@@ -62,7 +61,7 @@ class Rooms {
     }
 
     private operator fun Room.plus(user: User): Room {
-        broadcast("${user.username} joined room $roomId")
+        Log.info("${user.username} joined room $roomId")
         return Room(
             roomId = this.roomId,
             users = this.users + user,
@@ -75,6 +74,7 @@ class Rooms {
             Log.info("Discarded empty room ${room.roomId}")
         } else {
             allRooms += room
+            room.broadcastState()
         }
     }
 }

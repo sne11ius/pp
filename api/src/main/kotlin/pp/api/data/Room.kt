@@ -1,4 +1,4 @@
-package pp.api
+package pp.api.data
 
 import io.quarkus.logging.Log
 import jakarta.websocket.Session

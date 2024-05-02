@@ -1,8 +1,9 @@
-package pp.api
+package pp.api.data
 
 import jakarta.websocket.Session
 import net.datafaker.Faker
-import pp.api.UserType.SPECTATOR
+import pp.api.data.UserType.SPECTATOR
+import pp.api.parseQuery
 
 /**
  * A planning poker player
@@ -22,7 +23,7 @@ data class User(
      * The new [User] will have a random name and the [SPECTATOR] type.
      */
     constructor(session: Session) : this(
-        Faker().funnyName().name(),
+        parseQuery(session.queryString)["user"] ?: Faker().funnyName().name(),
         SPECTATOR,
         session
     )

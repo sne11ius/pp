@@ -1,4 +1,4 @@
-package pp.api
+package pp.api.data
 
 /**
  * Type of a planning poker player.

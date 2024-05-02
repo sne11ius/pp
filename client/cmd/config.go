@@ -34,16 +34,19 @@ func configInit() error {
 type config struct {
 	ServerURL string `mapstructure:"server" structs:"server" env:"SERVER"`
 	RoomID    string `mapstructure:"room" structs:"room" env:"ROOM"`
+	User      string `mapstructure:"user" structs:"user" env:"USER"`
 }
 
 var defaultConfig = config{
 	ServerURL: "http://localhost:8080",
 	RoomID:    "The danger room 💀",
+	User:      "",
 }
 
 func cliFlags() {
 	rootCmd.PersistentFlags().StringP("server", "s", defaultConfig.ServerURL, "server url")
 	rootCmd.PersistentFlags().StringP("room", "r", defaultConfig.RoomID, "room id")
+	rootCmd.PersistentFlags().StringP("user", "u", defaultConfig.User, "username")
 }
 
 // bindFlagsAndEnv will assign the environment variables to the cli parameters

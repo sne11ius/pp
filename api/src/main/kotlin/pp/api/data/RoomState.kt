@@ -1,4 +1,6 @@
-package pp.api
+package pp.api.data
+
+import pp.api.UserDto
 
 /**
  * State of a room as presented to clients

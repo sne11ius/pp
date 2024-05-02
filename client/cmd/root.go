@@ -64,7 +64,8 @@ with the given id.` +
 		ui := tui.New()
 		client := ppwsclient.New(roomWebsocketURL, ui.Room, ui.OnUpdate)
 		// Having an actual ui and websocket client run doesn't work in tests since there is no one to stop the app
-		if os.Getenv("SUB_CMD_FLAGS") == "" {
+		_, isTest := os.LookupEnv("SUB_CMD_FLAGS")
+		if !isTest {
 			c := make(chan os.Signal, 1)
 			signal.Notify(c, os.Interrupt, syscall.SIGINT)
 			var err error
@@ -83,6 +84,8 @@ with the given id.` +
 			if err != nil {
 				log.Fatalf("Could not do stuff: %v", err)
 			}
+		} else {
+			fmt.Println("Running in test mode - no tui, no ws")
 		}
 	},
 }
@@ -91,29 +94,34 @@ func getWsURL() string {
 	var roomURL string
 	if len(GlobalConfig.RoomID) != 0 {
 		roomURL = GlobalConfig.ServerURL + "/rooms/" + url.QueryEscape(GlobalConfig.RoomID)
-		return strings.Replace(roomURL, "http", "ws", 1)
-	}
-	roomURL = GlobalConfig.ServerURL + "/rooms/new"
-	client := &http.Client{
-		CheckRedirect: func(_ *http.Request, _ []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
-	}
-	res, err := client.Get(roomURL) //nolint:bodyclose // its in the defer below
-	if err != nil {
-		log.Fatalf("error making http request: %s\n", err)
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			log.Fatalf("error closing body: %s\n", err)
+		roomURL = strings.Replace(roomURL, "http", "ws", 1)
+	} else {
+		roomURL = GlobalConfig.ServerURL + "/rooms/new"
+		client := &http.Client{
+			CheckRedirect: func(_ *http.Request, _ []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
 		}
-	}(res.Body)
-	var location string
-	if res.StatusCode == http.StatusTemporaryRedirect {
-		location = res.Header.Get("Location")
+		res, err := client.Get(roomURL) //nolint:bodyclose // its in the defer below
+		if err != nil {
+			log.Fatalf("error making http request: %s\n", err)
+		}
+		defer func(Body io.ReadCloser) {
+			err := Body.Close()
+			if err != nil {
+				log.Fatalf("error closing body: %s\n", err)
+			}
+		}(res.Body)
+		var location string
+		if res.StatusCode == http.StatusTemporaryRedirect {
+			location = res.Header.Get("Location")
+		}
+		roomURL = location
 	}
-	return location
+	if GlobalConfig.User != "" {
+		roomURL = roomURL + "?user=" + url.QueryEscape(GlobalConfig.User)
+	}
+	return roomURL
 }
 
 // Execute runs the main program by invoking the rootCmd. Any error will result in an os.Exit(1)

@@ -2,22 +2,34 @@
 package ppwsclient
 
 import (
-	"fmt"
 	"log"
 	"os"
-	"os/signal"
 
 	"github.com/gorilla/websocket"
 )
 
 // PpWsClient is the pp ws client.
 type PpWsClient struct {
-	wsURL string
+	wsURL      string
+	room       interface{}
+	onUpdate   func()
+	connection *websocket.Conn
 }
 
 // New creates a new PpWsClient with a given ws URL.
-func New(wsURL string) *PpWsClient {
-	return &PpWsClient{wsURL}
+func New(wsURL string, room interface{}, onUpdate func()) *PpWsClient {
+	return &PpWsClient{wsURL, room, onUpdate, nil}
+}
+
+// Stop stops the pp client.
+func (client *PpWsClient) Stop() error {
+	err := client.connection.WriteMessage(
+		websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+	if err != nil {
+		return err
+	}
+	err = client.connection.Close()
+	return err
 }
 
 // Start runs the pp client.
@@ -32,32 +44,13 @@ func (client *PpWsClient) Start() error {
 	if os.Getenv("SUB_CMD_FLAGS") != "" {
 		return nil
 	}
-	done := make(chan struct{})
-	go func() {
-		defer close(done)
-		for {
-			_, message, err := c.ReadMessage()
-			if err != nil {
-				log.Println("read error:", err)
-				return
-			}
-			fmt.Printf("%s\n", message)
-		}
-	}()
-
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt)
+	client.connection = c
 	for {
-		select {
-		case <-done:
-			return nil
-		case <-interrupt:
-			// Cleanly close the connection by sending a close message and then
-			// waiting (with timeout) for the server to close the connection.
-			err := c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-			if err != nil {
-				return err
-			}
+		err = c.ReadJSON(client.room)
+		client.onUpdate()
+		if err != nil {
+			log.Println("read error:", err)
+			return err
 		}
 	}
 }

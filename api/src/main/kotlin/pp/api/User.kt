@@ -37,6 +37,13 @@ data class User(
     }
 
     /**
+     * @param obj
+     */
+    fun <T> sendObject(obj: T) {
+        session.asyncRemote.sendObject(obj)
+    }
+
+    /**
      * Check whether this [User] has the given [Session]
      *
      * @param session

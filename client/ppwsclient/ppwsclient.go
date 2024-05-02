@@ -2,6 +2,7 @@
 package ppwsclient
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -41,7 +42,9 @@ func (client *PpWsClient) Start() error {
 	defer func(c *websocket.Conn) {
 		err = c.Close()
 	}(c)
-	if os.Getenv("SUB_CMD_FLAGS") != "" {
+	_, isTest := os.LookupEnv("SUB_CMD_FLAGS")
+	if isTest {
+		fmt.Println("Not actually running ws client in test mode")
 		return nil
 	}
 	client.connection = c

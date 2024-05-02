@@ -12,7 +12,9 @@ import org.mockito.Mockito.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import pp.api.UserType.SPECTATOR
+import pp.api.data.Room
+import pp.api.data.User
+import pp.api.data.UserType.SPECTATOR
 
 class RoomTest {
     @Test

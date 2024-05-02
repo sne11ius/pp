@@ -9,9 +9,9 @@ import jakarta.websocket.OnOpen
 import jakarta.websocket.Session
 import jakarta.websocket.server.PathParam
 import jakarta.websocket.server.ServerEndpoint
-import jakarta.ws.rs.Encoded
+import pp.api.data.User
 import java.net.URLDecoder.decode
-import java.nio.charset.StandardCharsets
+import java.nio.charset.StandardCharsets.UTF_8
 
 /**
  * Websocket interface to the planning poker rooms
@@ -32,8 +32,8 @@ class RoomSocket(
      * @param roomId id of the room to join
      */
     @OnOpen
-    fun onOpen(session: Session, @Encoded @PathParam("roomId") roomId: String) {
-        rooms.ensureRoomContainsUser(decode(roomId, StandardCharsets.UTF_8), User(session))
+    fun onOpen(session: Session, @PathParam("roomId") roomId: String) {
+        rooms.ensureRoomContainsUser(decode(roomId, UTF_8), User(session))
     }
 
     /**

@@ -14,8 +14,9 @@ import org.mockito.Mockito.mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import pp.api.UserType.PARTICIPANT
-import pp.api.UserType.SPECTATOR
+import pp.api.data.User
+import pp.api.data.UserType.PARTICIPANT
+import pp.api.data.UserType.SPECTATOR
 
 @ExtendWith(MockitoExtension::class)
 class UserTest {
@@ -27,11 +28,17 @@ class UserTest {
 
     @Test
     fun ctor() {
-        val session = mock(Session::class.java)
-        val user = User(session)
+        val sessionMock = mock(Session::class.java)
+        whenever(sessionMock.queryString).thenReturn("")
+        val user = User(sessionMock)
         assertEquals(SPECTATOR, user.userType)
-        assertEquals(session, user.session)
+        assertEquals(sessionMock, user.session)
         assertTrue(user.username.isNotBlank())
+        whenever(sessionMock.queryString).thenReturn("user=nice username")
+        val user2 = User(sessionMock)
+        assertEquals(SPECTATOR, user2.userType)
+        assertEquals(sessionMock, user2.session)
+        assertEquals("nice username", user2.username)
     }
 
     @Test

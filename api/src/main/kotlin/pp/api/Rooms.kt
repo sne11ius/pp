@@ -3,6 +3,8 @@ package pp.api
 import io.quarkus.logging.Log
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.websocket.Session
+import pp.api.data.Room
+import pp.api.data.User
 import java.util.Collections.unmodifiableSet
 import java.util.concurrent.ConcurrentHashMap
 
@@ -52,11 +54,13 @@ class Rooms {
     fun getRooms(): Set<Room> = unmodifiableSet(allRooms)
 
     private operator fun get(roomId: String): Room? = allRooms.firstOrNull { it.roomId == roomId }
-    private operator fun get(session: Session): Pair<Room, User>? {
-        return allRooms.firstOrNull { it.hasUserWithSession(session) }?.let { room: Room ->
-            room.findUserWithSession(session)?.let { user ->
-                return room to user
-            }
+    private operator fun get(session: Session): Pair<Room, User>? = allRooms.firstOrNull {
+        it.hasUserWithSession(
+            session
+        )
+    }?.let { room: Room ->
+        room.findUserWithSession(session)?.let { user ->
+            room to user
         }
     }
 

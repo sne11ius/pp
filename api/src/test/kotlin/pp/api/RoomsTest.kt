@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.whenever
-import pp.api.UserType.SPECTATOR
+import pp.api.data.User
+import pp.api.data.UserType.SPECTATOR
 
 class RoomsTest {
     @Test

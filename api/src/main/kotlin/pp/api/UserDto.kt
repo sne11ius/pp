@@ -1,5 +1,8 @@
 package pp.api
 
+import pp.api.data.User
+import pp.api.data.UserType
+
 /**
  * User representation for clients
  *

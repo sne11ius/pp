@@ -11,7 +11,9 @@ import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.verify
-import pp.api.UserType.SPECTATOR
+import org.mockito.kotlin.whenever
+import pp.api.data.User
+import pp.api.data.UserType.SPECTATOR
 
 @ExtendWith(MockitoExtension::class)
 class RoomSocketTest {
@@ -28,6 +30,7 @@ class RoomSocketTest {
     fun onOpen() {
         val roomSocket = RoomSocket(roomsMock)
         val sessionMock = Mockito.mock(Session::class.java)
+        whenever(sessionMock.queryString).thenReturn("")
         val roomId = "nice room with a \uD83D\uDCA5"
         roomSocket.onOpen(sessionMock, roomId)
         verify(roomsMock).ensureRoomContainsUser(capture(stringCaptor), capture(userCaptor))

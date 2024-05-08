@@ -1,4 +1,6 @@
+import com.diffplug.gradle.spotless.SpotlessExtension
 import org.gradle.api.JavaVersion.VERSION_21
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     jacoco
@@ -24,6 +26,7 @@ dependencies {
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-resteasy-reactive")
     implementation("io.quarkus:quarkus-rest-jackson")
+    implementation(libs.jackson.kotlin)
     implementation("io.quarkus:quarkus-websockets")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.quarkus:quarkus-arc")
@@ -69,17 +72,17 @@ allOpen {
     annotation("io.quarkus.test.junit.QuarkusTest")
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = VERSION_21.toString()
     kotlinOptions.javaParameters = true
 }
 
-configure<com.diffplug.gradle.spotless.SpotlessExtension> {
+configure<SpotlessExtension> {
     kotlin {
-        diktat()
+        diktat("2.0.0")
     }
     kotlinGradle {
         target("*.gradle.kts")
-        diktat()
+        diktat("2.0.0")
     }
 }

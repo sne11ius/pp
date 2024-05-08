@@ -16,7 +16,9 @@ USER quarkus
 WORKDIR /code
 COPY api/src /code/src
 RUN \
-    ./gradlew build -Dquarkus.package.type=native && \
+    ./gradlew build -Dquarkus.native.enabled=true -Dquarkus.package.jar.enabled=false  \
+    # Prevent "Error: Detected an instance of Random/SplittableRandom class in the image heap"
+    -Dquarkus.native.additional-build-args="--initialize-at-run-time=net.datafaker.service.RandomService" && \
     # Quarkus settings like "quarkus.native.compression.additional-args" seemed to have no effect - maybe we applied them
     # wrong. But its just as easy to run upx by ourselves
     upx --ultra-brute /code/build/*-runner

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>pp</title>
+</head>
+<script>
+
+    function joinroom() {
+        const id = document.getElementById('room').value
+        console.log('room id', id)
+        const socket = new WebSocket("ws://localhost:8080/rooms/" + id);
+        socket.addEventListener("open", (event) => {
+        });
+
+        socket.addEventListener("message", (event) => {
+            console.log(event.data);
+        });
+        socket.addEventListener("error", (event) => {
+            console.error("error ", event);
+        });
+
+    }
+</script>
+<input type="text" id="room">
+<button onclick="joinroom()">join</button>
+</html>

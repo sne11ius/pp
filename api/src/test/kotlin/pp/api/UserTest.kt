@@ -12,7 +12,6 @@ import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import pp.api.data.User
 import pp.api.data.UserType.PARTICIPANT
@@ -42,20 +41,10 @@ class UserTest {
     }
 
     @Test
-    fun sendMessage() {
-        val session = mock(Session::class.java)
-        whenever(session.asyncRemote).thenReturn(remote)
-        val user = User("funny-name", PARTICIPANT, session)
-        user.sendMessage("Hello world")
-        verify(remote).sendText(sendTextCaptor.capture())
-        assertEquals("Hello world", sendTextCaptor.value)
-    }
-
-    @Test
     fun has() {
         val session = mock(Session::class.java)
         whenever(session.id).thenReturn("123")
-        val user = User("funny-name", PARTICIPANT, session)
+        val user = User("funny-name", PARTICIPANT, "?", session)
         assertTrue(user.has(session))
         val session1 = mock(Session::class.java)
         whenever(session.id).thenReturn("another id")

@@ -42,14 +42,66 @@ func (s *UserType) UnmarshalJSON(data []byte) (err error) {
 	return nil
 }
 
+// Card represents data to send to the api if a user wants to play a card
+type Card struct {
+	RequestType string `json:"requestType"`
+	CardValue   string `json:"cardValue"`
+}
+
+// PlayCard is a helper function to create Card structs
+func PlayCard(cardValue string) Card {
+	return Card{
+		RequestType: "PlayCard",
+		CardValue:   cardValue,
+	}
+}
+
+// Name represents data to send to the api if a user wants to change its name
+type Name struct {
+	RequestType string `json:"requestType"`
+	Name        string `json:"name"`
+}
+
+// ChangeName is a helper function to create Name structs
+func ChangeName(name string) Name {
+	return Name{
+		RequestType: "ChangeName",
+		Name:        name,
+	}
+}
+
+// NoDetailsAction represents data to send to the api if a user wants to take an action
+// that doesn't require any parameters
+type NoDetailsAction struct {
+	RequestType string `json:"requestType"`
+}
+
+// RevealCards creates a 'reveal cards' message to send to the api
+func RevealCards() NoDetailsAction {
+	return NoDetailsAction{
+		RequestType: "RevealCards",
+	}
+}
+
+// StartNewRound creates a 'start new round' message to send to the api
+func StartNewRound() NoDetailsAction {
+	return NoDetailsAction{
+		RequestType: "StartNewRound",
+	}
+}
+
 // User is participant in a planning poker
 type User struct {
-	Username string   `json:"username"`
-	UserType UserType `json:"userType"`
+	Username  string   `json:"username"`
+	UserType  UserType `json:"userType"`
+	YourUser  bool     `json:"yourUser"`
+	CardValue string   `json:"cardValue"`
 }
 
 // Room is a planning poker room, including all participants and a state
 type Room struct {
-	RoomID string  `json:"roomId"`
-	Users  []*User `json:"users"`
+	RoomID  string   `json:"roomId"`
+	Deck    []string `json:"deck"`
+	Users   []*User  `json:"users"`
+	Average string   `json:"average"`
 }

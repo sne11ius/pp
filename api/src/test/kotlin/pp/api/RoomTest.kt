@@ -9,9 +9,10 @@ import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import pp.api.data.GamePhase.CARDS_REVEALED
+import pp.api.data.LogEntry
+import pp.api.data.LogLevel
 import pp.api.data.Room
 import pp.api.data.User
 import pp.api.data.UserType.SPECTATOR
@@ -20,8 +21,8 @@ class RoomTest {
     @Test
     fun equalsAndHashCode() {
         val session = mock(Session::class.java)
-        val room1 = Room("nice-id", listOf(User("a name", SPECTATOR, session)))
-        val likeRoom1 = Room("nice-id", listOf(User("another name", SPECTATOR, session)))
+        val room1 = Room("nice-id", listOf(User("a name", SPECTATOR, "?", session)))
+        val likeRoom1 = Room("nice-id", listOf(User("another name", SPECTATOR, "?", session)))
         val unlikeRoom1 = Room("another-nice-id")
 
         assertEquals(room1, likeRoom1) { "Rooms with equal ids should be equal" }
@@ -36,11 +37,26 @@ class RoomTest {
     }
 
     @Test
-    fun broadcast() {
-        val user = mock(User::class.java)
-        val room = Room("nice-id", listOf(user, user, user))
-        room.broadcast("nice message")
-        verify(user, times(3)).sendMessage("nice message")
+    fun copyWithNothingDoesExactCopy() {
+        val room = Room("nice-id")
+        val session = mock(Session::class.java)
+        whenever(session.queryString).thenReturn("")
+        val user = User(session)
+        val deck = listOf("nice card")
+        val log = listOf(LogEntry(LogLevel.INFO, "nice msg"))
+        val copy = room.copy(
+            roomId = "new-id",
+            users = listOf(user),
+            deck = deck,
+            gamePhase = CARDS_REVEALED,
+            log = log
+        )
+        assertNotEquals(room, copy)
+        assertEquals(copy.roomId, "new-id")
+        assertEquals(copy.users, listOf(user))
+        assertEquals(copy.deck, deck)
+        assertEquals(copy.gamePhase, CARDS_REVEALED)
+        assertEquals(copy.log, log)
     }
 
     @Test
@@ -54,11 +70,11 @@ class RoomTest {
     fun findUserWithSession() {
         val session = mock(Session::class.java)
         whenever(session.id).thenReturn("nice-id")
-        val user = User("user", SPECTATOR, session)
+        val user = User("user", SPECTATOR, "?", session)
 
         val session1 = mock(Session::class.java)
         whenever(session1.id).thenReturn("another-id")
-        val user1 = User("user1", SPECTATOR, session1)
+        val user1 = User("user1", SPECTATOR, "?", session1)
 
         val room = Room("nice-id", listOf(user, user1, user))
         assertSame(user1, room.findUserWithSession(session1)) { "Users should be found by session id" }
@@ -72,7 +88,7 @@ class RoomTest {
     fun hasUserWithSession() {
         val session = mock(Session::class.java)
         whenever(session.id).thenReturn("nice-id")
-        val user = User("user", SPECTATOR, session)
+        val user = User("user", SPECTATOR, "?", session)
         val room = Room("nice-id", listOf(user))
         assertTrue(room.hasUserWithSession(session)) { "Should find user with session id" }
 
@@ -85,7 +101,7 @@ class RoomTest {
     fun minus() {
         val session = mock(Session::class.java)
         whenever(session.id).thenReturn("nice-id")
-        val user = User("user", SPECTATOR, session)
+        val user = User("user", SPECTATOR, "?", session)
         val room = Room("nice-id", listOf(user))
         assertTrue(room.minus(session).isEmpty())
 

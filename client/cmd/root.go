@@ -63,6 +63,7 @@ with the given id.` +
 		roomWebsocketURL := getWsURL()
 		ui := tui.New()
 		client := ppwsclient.New(roomWebsocketURL, ui.Room, ui.OnUpdate)
+		ui.WsClient = client
 		// Having an actual ui and websocket client run doesn't work in tests since there is no one to stop the app
 		_, isTest := os.LookupEnv("SUB_CMD_FLAGS")
 		if !isTest {

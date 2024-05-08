@@ -20,3 +20,4 @@ hamcrest-json = { module = "uk.co.datumedge:hamcrest-json", version.ref = "hamcr
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito-inline" }
 datafaker = { module = "net.datafaker:datafaker", version.ref = "data-faker" }
+jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }

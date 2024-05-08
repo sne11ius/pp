@@ -33,6 +33,8 @@ commit.
 
 See [server readme](./api/README.md) for a hint on how to build a docker image.
 
+See [Server API](./api/API.md) for description of the API.
+
 - No persistence
 - No UI
 - Websocket API
@@ -47,9 +49,10 @@ See [server readme](./api/README.md) for a hint on how to build a docker image.
 - Available `{settings}` format tbd.
 - Default settings tbd.
 - Since this is a "game", we cannot allow the players to cheat. All state
-  managed by the server. Players can request a change (eg. "I vote 13") and will
-  receive either the updated game state in full (no problem since it's tiny), or
-  an error message (eg. "Cannot vote now because not in vote phase")
+  managed by the server. Players can request a change (eg. "I play card 13") and
+  will receive either the updated game state in full (no problem since it's
+  tiny), or an error message (eg. "Cannot play card now because not in playing
+  phase")
 - Powered by quarkus?
 - Written in Kotlin, written in java if kotlin with quarkus is too much of a
   headache
@@ -72,7 +75,7 @@ See [server readme](./api/README.md) for a hint on how to build a docker image.
   - Server to use
   - Default room id
   - username
-  - Some kind of "usertype", to distinguish "voter" vs "observer"
+  - Some kind of "usertype", to distinguish "player" vs "observer"
 
 - Written in golang or rust
 - There are some known libs from the golangiverse we could use:

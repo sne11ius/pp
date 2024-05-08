@@ -1,5 +1,8 @@
 package pp.api
 
+import com.fasterxml.jackson.core.JsonParseException
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.quarkus.logging.Log
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.websocket.OnClose
@@ -10,6 +13,7 @@ import jakarta.websocket.Session
 import jakarta.websocket.server.PathParam
 import jakarta.websocket.server.ServerEndpoint
 import pp.api.data.User
+import pp.api.data.UserRequest
 import java.net.URLDecoder.decode
 import java.nio.charset.StandardCharsets.UTF_8
 
@@ -25,6 +29,8 @@ import java.nio.charset.StandardCharsets.UTF_8
 class RoomSocket(
     private val rooms: Rooms,
 ) {
+    private val mapper = jacksonObjectMapper()
+
     /**
      * Generates a new user for the session and puts it in the requested room
      *
@@ -40,11 +46,17 @@ class RoomSocket(
      * Currently does nothing
      *
      * @param message the message sent
-     * @param ignored currently ignored session
+     * @param session session associated with the user
      */
     @OnMessage
-    fun onMessage(message: String, ignored: Session) {
+    fun onMessage(message: String, session: Session) {
         Log.info("Received message $message")
+        try {
+            val request: UserRequest = mapper.readValue(message)
+            rooms.submitUserRequest(request, session)
+        } catch (e: JsonParseException) {
+            Log.error("Failed to parse message: $message", e)
+        }
     }
 
     /**

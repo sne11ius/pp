@@ -5,6 +5,8 @@ config:
     # Adjusted since release-please likes to generate two blank lines in changelogs
     # see https://github.com/googleapis/release-please/issues/2085
     maximum: 2
+  MD013:
+    code_block_line_length: 200
   # MD024/no-duplicate-heading/no-duplicate-header - Multiple headings with the same content
   MD024:
     # Only check sibling headings

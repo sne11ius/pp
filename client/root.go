@@ -1,6 +1,4 @@
-// Package cmd contains all subcommands. Because this is a TUI app, currently (and in the foreseeable future) there is
-// only one "root" command that starts the TUI.
-package cmd
+package main
 
 import (
 	"fmt"
@@ -14,9 +12,6 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/sne11ius/pp/client/tui"
-
-	"github.com/sne11ius/pp/client/ppwsclient"
 	"github.com/spf13/cobra"
 )
 
@@ -61,8 +56,8 @@ with the given id.` +
 	Run: func(_ *cobra.Command, _ []string) {
 		printHeader()
 		roomWebsocketURL := getWsURL()
-		ui := tui.New()
-		client := ppwsclient.New(roomWebsocketURL, ui.Room, ui.OnUpdate)
+		ui := NewTUI()
+		client := New(roomWebsocketURL, ui.Room, ui.OnUpdate)
 		ui.WsClient = client
 		// Having an actual ui and websocket client run doesn't work in tests since there is no one to stop the app
 		_, isTest := os.LookupEnv("SUB_CMD_FLAGS")
@@ -73,18 +68,18 @@ with the given id.` +
 			go func() {
 				<-c
 				err := client.Stop()
-				if err != nil {
-					return
+				if err != nil { // ignore.coverage
+					return // ignore.coverage
 				}
-				ui.App.Stop()
+				ui.App.Stop() // ignore.coverage
 			}()
 			go func() {
 				err = client.Start()
 			}()
 			err = ui.App.Run()
-			if err != nil {
-				log.Fatalf("Could not do stuff: %v", err)
-			}
+			if err != nil { // ignore.coverage
+				log.Fatalf("Could not do stuff: %v", err) // ignore.coverage
+			} // ignore.coverage
 		} else {
 			fmt.Println("Running in test mode - no tui, no ws")
 		}
@@ -104,14 +99,14 @@ func getWsURL() string {
 			},
 		}
 		res, err := client.Get(roomURL) //nolint:bodyclose // its in the defer below
-		if err != nil {
-			log.Fatalf("error making http request: %s\n", err)
-		}
+		if err != nil {                 // ignore.coverage
+			log.Fatalf("error making http request: %s\n", err) // ignore.coverage
+		} // ignore.coverage
 		defer func(Body io.ReadCloser) {
 			err := Body.Close()
-			if err != nil {
-				log.Fatalf("error closing body: %s\n", err)
-			}
+			if err != nil { // ignore.coverage
+				log.Fatalf("error closing body: %s\n", err) // ignore.coverage
+			} // ignore.coverage
 		}(res.Body)
 		var location string
 		if res.StatusCode == http.StatusTemporaryRedirect {
@@ -136,7 +131,7 @@ func Execute() {
 }
 
 func init() {
-	if err := configInit(); err != nil {
-		panic(err.Error())
+	if err := configInit(); err != nil { // ignore.coverage
+		panic(err.Error()) // ignore.coverage
 	}
 }

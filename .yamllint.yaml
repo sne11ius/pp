@@ -9,5 +9,6 @@ rules:
     allow-non-breakable-words: true
   truthy:
     check-keys: false
-ignore:
+ignore: |
   api/build
+  integration-test/node_modules/**

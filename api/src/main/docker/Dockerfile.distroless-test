@@ -1,0 +1,29 @@
+## Only difference between this and the "real" dockerfile is we omit upx.
+## Packing takes a long time and shouldn't make too much of a difference
+## for intgration tests.
+
+## Stage 1 : build with maven builder image with native capabilities
+FROM quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21 AS build
+USER root
+COPY --chown=quarkus:quarkus api/gradlew /code/gradlew
+COPY --chown=quarkus:quarkus api/gradle /code/gradle
+COPY --chown=quarkus:quarkus api/build.gradle.kts /code/
+COPY --chown=quarkus:quarkus api/settings.gradle.kts /code/
+COPY --chown=quarkus:quarkus api/gradle.properties /code/
+# Required to access the hash of the current commit during build
+COPY --chown=quarkus:quarkus .git /code/
+USER quarkus
+WORKDIR /code
+COPY api/src /code/src
+RUN \
+    ./gradlew build -Dquarkus.native.enabled=true -Dquarkus.package.jar.enabled=false  \
+    # Prevent "Error: Detected an instance of Random/SplittableRandom class in the image heap"
+    -Dquarkus.native.additional-build-args="--initialize-at-run-time=net.datafaker.service.RandomService"
+
+## Stage 2 : create the docker final image
+FROM quay.io/quarkus/quarkus-distroless-image:2.0
+WORKDIR /work/
+COPY --from=build /code/build/*-runner /work/application
+EXPOSE 8080
+USER nonroot
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]

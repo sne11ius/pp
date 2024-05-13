@@ -1,5 +1,6 @@
 package pp.api.dto
 
+import io.quarkus.runtime.annotations.RegisterForReflection
 import pp.api.data.GamePhase
 import pp.api.data.GamePhase.CARDS_REVEALED
 import pp.api.data.LogEntry
@@ -20,6 +21,8 @@ import java.util.Locale.US
  *   [CARDS_REVEALED]
  * @property log list of [LogEntry]s for this rooms
  */
+// see https://quarkus.io/guides/writing-native-applications-tips#registerForReflection
+@RegisterForReflection(registerFullHierarchy = true)
 data class RoomDto(
     val roomId: String,
     val deck: List<String>,

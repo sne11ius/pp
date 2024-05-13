@@ -1,5 +1,4 @@
-// Package data contains structs that are make up the actual stuff we care about. Like a player or a room.
-package data
+package main
 
 import (
 	"encoding/json"

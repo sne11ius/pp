@@ -1,103 +1,99 @@
-// Package tui contains all ui related code.
-package tui
+package main
 
 import (
 	"log"
 
 	"github.com/gdamore/tcell/v2"
 
-	"github.com/sne11ius/pp/client/ppwsclient"
-
 	"github.com/rivo/tview"
-	"github.com/sne11ius/pp/client/data"
 )
 
 // TUI contains all required hooks to connect websockets to ui updates
 type TUI struct {
-	OnUpdate func()
-	App      *tview.Application
-	Room     *data.Room
-	WsClient *ppwsclient.PpWsClient
+	OnUpdate     func()
+	App          *tview.Application
+	focusRotator *focusRotator
+	Room         *Room
+	WsClient     *PpWsClient
 }
 
-// New creates the UI of the app
-func New() *TUI {
+// NewTUI creates the UI of the app
+func NewTUI() *TUI {
 	tui := &TUI{
-		Room: &data.Room{},
+		Room: &Room{},
 	}
 
-	flex := tview.NewFlex().
+	root := tview.NewFlex().
 		SetDirection(tview.FlexRow)
 	tui.App = tview.NewApplication().
-		SetRoot(flex, true).
+		SetRoot(root, true).
 		EnablePaste(true).
-		EnableMouse(true).
-		SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-			if event.Key() == tcell.KeyRune && event.Rune() == 'q' && event.Modifiers() == tcell.ModAlt {
-				// Stop the application when Alt+Q is pressed.
-				tui.App.Stop()
-				return nil
-			}
-			return event
-		})
+		EnableMouse(true)
+
+	tui.focusRotator = newFocusRotator(tui.App)
+
+	isFirstDraw := true
 
 	tui.OnUpdate = func() {
+		oldIndex := tui.focusRotator.currentIndex
+		tui.focusRotator.Clear()
 		tui.App.QueueUpdateDraw(func() {
-			flex.Clear()
-			var yourUser *data.User
-			for _, user := range tui.Room.Users {
-				if user.YourUser {
-					yourUser = user
-				}
-			}
-			if yourUser == nil {
-				tui.App.Stop()
-				log.Fatalf("No self user found")
-			}
-			flex.AddItem(tui.createHeader(yourUser.Username), 3, 1, false)
+			root.Clear()
+			header, inputs := tui.createHeader()
+			tui.focusRotator.AddAll(inputs)
+			root.AddItem(header, 3, 1, true)
 			usersAndActions := tview.NewFlex().
 				SetDirection(tview.FlexColumn)
 
 			usersAndActions.AddItem(tui.createUsersTable(), 0, 100, false)
-			usersAndActions.AddItem(tui.createActionsArea(), 0, 100, false)
-			flex.AddItem(usersAndActions, 0, 1, false)
+			actionsArea, inputs := tui.createActionsArea()
+			tui.focusRotator.AddAll(inputs)
+			if isFirstDraw {
+				tui.focusRotator.SetFocusIndex(1) // Should be the first vote button
+				isFirstDraw = false
+			} else {
+				tui.focusRotator.SetFocusIndex(oldIndex)
+			}
+			usersAndActions.AddItem(actionsArea, 0, 100, false)
+			root.AddItem(usersAndActions, 0, 1, false)
 		})
 	}
 	return tui
 }
 
-func (tui *TUI) createHeader(username string) *tview.Flex {
+func (tui *TUI) createHeader() (*tview.Flex, []inputCapturer) {
+	quitButton := tui.createQuitButton()
 	header := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
-		AddItem(tui.createUsernameInput(username), 0, 10, true).
-		AddItem(tui.createQuitButton(), 0, 1, false)
-	return header
+		AddItem(nil, 0, 10, true).
+		AddItem(quitButton, 0, 1, false)
+	return header, []inputCapturer{quitButton}
 }
 
 func (tui *TUI) createQuitButton() *tview.Button {
-	quitButton := tview.NewButton("[::u]Q[::-]uit").SetSelectedFunc(func() {
+	stopFunc := func() {
 		tui.App.Stop()
+	}
+	quitButton := tview.NewButton("Quit").SetSelectedFunc(stopFunc)
+	quitButton.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Rune() == ' ' {
+			stopFunc()
+			return nil
+		}
+		return event
 	})
 	return quitButton
-}
-
-func (tui *TUI) createUsernameInput(username string) *tview.InputField {
-	nameInput := tview.NewInputField().
-		SetLabel("Your name: ").
-		SetText(username)
-	nameInput.SetBorderPadding(1, 0, 1, 1)
-	nameInput.SetDoneFunc(func(_ tcell.Key) {
-		newName := nameInput.GetText()
-		tui.WsClient.SendMessage(data.ChangeName(newName))
-	})
-	return nameInput
 }
 
 func (tui *TUI) createUsersTable() *tview.Flex {
 	usernames := ""
 	cardValues := ""
 	for _, user := range tui.Room.Users {
-		usernames += user.Username + "\n"
+		usernames += user.Username
+		if user.YourUser {
+			usernames += " (*)"
+		}
+		usernames += "\n"
 		if user.CardValue == "" {
 			cardValues += "?\n"
 		} else {
@@ -112,9 +108,9 @@ func (tui *TUI) createUsersTable() *tview.Flex {
 		SetTitleAlign(tview.AlignLeft)
 
 	_, err := usersText.Write([]byte(usernames))
-	if err != nil {
-		log.Fatalf("Could not write to text: %v", err)
-	}
+	if err != nil { // ignore.coverage
+		log.Fatalf("Could not write to text: %v", err) // ignore.coverage
+	} // ignore.coverage
 
 	cardValuesText := tview.NewTextView().
 		SetWordWrap(false)
@@ -124,9 +120,9 @@ func (tui *TUI) createUsersTable() *tview.Flex {
 		SetTitleAlign(tview.AlignLeft)
 
 	_, err = cardValuesText.Write([]byte(cardValues))
-	if err != nil {
-		log.Fatalf("Could not write to text: %v", err)
-	}
+	if err != nil { // ignore.coverage
+		log.Fatalf("Could not write to text: %v", err) // ignore.coverage
+	} // ignore.coverage
 
 	usersTable := tview.NewFlex().
 		AddItem(usersText, 0, 3, false).
@@ -140,9 +136,9 @@ func (tui *TUI) createUsersTable() *tview.Flex {
 		SetTitleAlign(tview.AlignLeft)
 
 	_, err = averageText.Write([]byte(tui.Room.Average))
-	if err != nil {
-		log.Fatalf("Could not write to text: %v", err)
-	}
+	if err != nil { // ignore.coverage
+		log.Fatalf("Could not write to text: %v", err) // ignore.coverage
+	} // ignore.coverage
 
 	tableWithAverage := tview.NewFlex().
 		AddItem(nil, 0, 3, false).
@@ -156,12 +152,13 @@ func (tui *TUI) createUsersTable() *tview.Flex {
 	return result
 }
 
-func (tui *TUI) createActionsArea() *tview.Flex {
+func (tui *TUI) createActionsArea() (*tview.Flex, []inputCapturer) {
 	rows := tview.NewFlex().
 		SetDirection(tview.FlexRow)
 	rows.SetBorder(true)
 	rows.SetTitle("Your card")
 	var currentRow *tview.Flex
+	inputs := make([]inputCapturer, 0)
 	for i, card := range tui.Room.Deck {
 		if i%4 == 0 {
 			currentRow = tview.NewFlex().
@@ -170,8 +167,9 @@ func (tui *TUI) createActionsArea() *tview.Flex {
 		}
 		button := tview.NewButton(card).
 			SetSelectedFunc(func() {
-				tui.WsClient.SendMessage(data.PlayCard(card))
+				tui.WsClient.SendMessage(PlayCard(card))
 			})
+		inputs = append(inputs, button)
 		currentRow.AddItem(button, 0, 1, true)
 	}
 	// Fill with blanks so all buttons have the same size
@@ -179,13 +177,15 @@ func (tui *TUI) createActionsArea() *tview.Flex {
 		currentRow.AddItem(nil, 0, 1, false)
 	}
 	revealButton := tview.NewButton("Reveal").SetSelectedFunc(func() {
-		tui.WsClient.SendMessage(data.RevealCards())
+		tui.WsClient.SendMessage(RevealCards())
 	})
+	inputs = append(inputs, revealButton)
 	rows.AddItem(revealButton, 3, 1, false)
 	newRoundButton := tview.NewButton("New Round").SetSelectedFunc(func() {
-		tui.WsClient.SendMessage(data.StartNewRound())
+		tui.WsClient.SendMessage(StartNewRound())
 	})
+	inputs = append(inputs, newRoundButton)
 	rows.AddItem(newRoundButton, 3, 1, false)
 	rows.AddItem(nil, 0, 10, false)
-	return rows
+	return rows, inputs
 }

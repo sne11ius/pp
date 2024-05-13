@@ -1,5 +1,4 @@
-// Package ppwsclient contains the actual planning poker websocket client.
-package ppwsclient
+package main
 
 import (
 	"fmt"
@@ -12,30 +11,29 @@ import (
 // PpWsClient is the pp ws client.
 type PpWsClient struct {
 	wsURL      string
-	room       interface{}
+	room       *Room
 	onUpdate   func()
 	connection *websocket.Conn
 	channel    chan interface{}
 }
 
 // New creates a new PpWsClient with a given ws URL.
-func New(wsURL string, room interface{}, onUpdate func()) *PpWsClient {
+func New(wsURL string, room *Room, onUpdate func()) *PpWsClient {
 	return &PpWsClient{wsURL, room, onUpdate, nil, nil}
 }
 
 // Start runs the pp client.
 func (client *PpWsClient) Start() error {
-	c, _, err := websocket.DefaultDialer.Dial(client.wsURL, nil)
-	if err != nil {
-		return err
+	c, r, err := websocket.DefaultDialer.Dial(client.wsURL, nil)
+	if err != nil { // ignore.coverage
+		return err // ignore.coverage
 	}
-	defer func(c *websocket.Conn) {
-		err = c.Close()
-	}(c)
+	defer c.Close()
+	defer r.Body.Close()
 	_, isTest := os.LookupEnv("SUB_CMD_FLAGS")
-	if isTest {
-		fmt.Println("Not actually running ws client in test mode")
-		return nil
+	if isTest { // ignore.coverage
+		fmt.Println("Not actually running ws client in test mode") // ignore.coverage
+		return nil                                                 // ignore.coverage
 	}
 	client.connection = c
 	client.channel = make(chan interface{})
@@ -43,8 +41,8 @@ func (client *PpWsClient) Start() error {
 		defer close(client.channel)
 		for msg := range client.channel {
 			err = c.WriteJSON(msg)
-			if err != nil {
-				return
+			if err != nil { // ignore.coverage
+				return // ignore.coverage
 			}
 		}
 	}()
@@ -52,8 +50,8 @@ func (client *PpWsClient) Start() error {
 		err = c.ReadJSON(client.room)
 		client.onUpdate()
 		if err != nil {
-			log.Println("read error:", err)
-			return err
+			log.Println("read error:", err) // ignore.coverage
+			return err                      // ignore.coverage
 		}
 	}
 }

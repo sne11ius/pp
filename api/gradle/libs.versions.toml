@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.9.23"
+kotlin = "1.9.24"
 spotless = "6.25.0"
 detekt = "1.23.6"
 quarkus = "3.10.0"

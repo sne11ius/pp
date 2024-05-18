@@ -15,10 +15,7 @@ COPY --chown=quarkus:quarkus .git /code/
 USER quarkus
 WORKDIR /code
 COPY api/src /code/src
-RUN \
-    ./gradlew build -Dquarkus.native.enabled=true -Dquarkus.package.jar.enabled=false  \
-    # Prevent "Error: Detected an instance of Random/SplittableRandom class in the image heap"
-    -Dquarkus.native.additional-build-args="--initialize-at-run-time=net.datafaker.service.RandomService"
+RUN ./gradlew build -Dquarkus.native.enabled=true -Dquarkus.package.jar.enabled=false
 
 ## Stage 2 : create the docker final image
 FROM quay.io/quarkus/quarkus-distroless-image:2.0

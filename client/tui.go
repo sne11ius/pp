@@ -110,7 +110,7 @@ func (tui *TUI) createUsersTable() *tview.Flex {
 	_, err := usersText.Write([]byte(usernames))
 	if err != nil { // ignore.coverage
 		log.Fatalf("Could not write to text: %v", err) // ignore.coverage
-	} // ignore.coverage
+	}
 
 	cardValuesText := tview.NewTextView().
 		SetWordWrap(false)
@@ -122,7 +122,7 @@ func (tui *TUI) createUsersTable() *tview.Flex {
 	_, err = cardValuesText.Write([]byte(cardValues))
 	if err != nil { // ignore.coverage
 		log.Fatalf("Could not write to text: %v", err) // ignore.coverage
-	} // ignore.coverage
+	}
 
 	usersTable := tview.NewFlex().
 		AddItem(usersText, 0, 3, false).
@@ -138,7 +138,7 @@ func (tui *TUI) createUsersTable() *tview.Flex {
 	_, err = averageText.Write([]byte(tui.Room.Average))
 	if err != nil { // ignore.coverage
 		log.Fatalf("Could not write to text: %v", err) // ignore.coverage
-	} // ignore.coverage
+	}
 
 	tableWithAverage := tview.NewFlex().
 		AddItem(nil, 0, 3, false).

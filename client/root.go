@@ -79,7 +79,7 @@ with the given id.` +
 			err = ui.App.Run()
 			if err != nil { // ignore.coverage
 				log.Fatalf("Could not do stuff: %v", err) // ignore.coverage
-			} // ignore.coverage
+			}
 		} else {
 			fmt.Println("Running in test mode - no tui, no ws")
 		}
@@ -101,12 +101,12 @@ func getWsURL() string {
 		res, err := client.Get(roomURL) //nolint:bodyclose // its in the defer below
 		if err != nil {                 // ignore.coverage
 			log.Fatalf("error making http request: %s\n", err) // ignore.coverage
-		} // ignore.coverage
+		}
 		defer func(Body io.ReadCloser) {
 			err := Body.Close()
 			if err != nil { // ignore.coverage
 				log.Fatalf("error closing body: %s\n", err) // ignore.coverage
-			} // ignore.coverage
+			}
 		}(res.Body)
 		var location string
 		if res.StatusCode == http.StatusTemporaryRedirect {

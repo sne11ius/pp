@@ -9,9 +9,10 @@ test.describe('basic --help tests', () => {
 });
 
 test.describe('tui tests', () => {
-    test.use({program: {file: "../client/pp", args: ['-u', 'nice user', '-s', 'http://localhost:31337', '-r', '']}});
+    test.use({program: {file: "../client/pp", args: ['-u', 'nice user', '-r', 'what a room to be alive', '-s', 'http://localhost:31337']}});
     test("pp can enter random room", async ({terminal}) => {
         await expect(terminal.getByText(/nice user \(\*\)/g)).toBeVisible();
+        await expect(terminal.getByText(/what a room to be alive/g)).toBeVisible();
     });
 });
 

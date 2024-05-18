@@ -6,7 +6,6 @@ quarkus = "3.10.0"
 hamcrest-json = "0.3"
 mockito = "5.3.1"
 mockito-inline = "5.2.0"
-data-faker = "2.2.2"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -19,5 +18,4 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 hamcrest-json = { module = "uk.co.datumedge:hamcrest-json", version.ref = "hamcrest-json" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito-inline" }
-datafaker = { module = "net.datafaker:datafaker", version.ref = "data-faker" }
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }

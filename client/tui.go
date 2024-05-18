@@ -63,9 +63,14 @@ func NewTUI() *TUI {
 
 func (tui *TUI) createHeader() (*tview.Flex, []inputCapturer) {
 	quitButton := tui.createQuitButton()
+	title := tview.NewTextView().
+		SetDynamicColors(true)
+	title.SetBorder(true)
+	title.SetText(tui.Room.RoomID)
+
 	header := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
-		AddItem(nil, 0, 10, true).
+		AddItem(title, 0, 10, true).
 		AddItem(quitButton, 0, 1, false)
 	return header, []inputCapturer{quitButton}
 }

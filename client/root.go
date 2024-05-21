@@ -115,7 +115,7 @@ func getWsURL() string {
 		roomURL = location
 	}
 	if GlobalConfig.User != "" {
-		roomURL = roomURL + "?user=" + url.QueryEscape(GlobalConfig.User)
+		roomURL = roomURL + "?user=" + url.QueryEscape(GlobalConfig.User) + "&userType=PARTICIPANT"
 	}
 	return roomURL
 }

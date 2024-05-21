@@ -3,6 +3,7 @@ package pp.api.data
 import io.quarkus.logging.Log
 import jakarta.websocket.Session
 import pp.api.data.GamePhase.PLAYING
+import pp.api.data.UserType.PARTICIPANT
 
 /**
  * A planning poker room.
@@ -27,6 +28,13 @@ class Room(
     val gamePhase: GamePhase = PLAYING,
     val log: List<LogEntry> = emptyList(),
 ) {
+    /**
+     * A list of all participants in this room.
+     *
+     * That is, all users with [User.userType] == [UserType.PARTICIPANT]
+     */
+    val participants: List<User> = users.filter { it.userType == PARTICIPANT }
+
     /**
      * Helper function to create a new room, based on the current one
      *

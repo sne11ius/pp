@@ -786,7 +786,11 @@ data class User(
      */
     constructor(session: Session) : this(
         username = parseQuery(session.queryString)["user"] ?: funnyNames.random(),
-        userType = SPECTATOR,
+        userType = parseQuery(session.queryString)["userType"].let { typeString ->
+            typeString?.let {
+                UserType.valueOf(typeString)
+            } ?: SPECTATOR
+        },
         cardValue = null,
         session = session
     )

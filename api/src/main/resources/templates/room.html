@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>pp - {roomId}</title>
+</head>
+<script>
+    onload = async () => {
+        const wsUrl = location.toString().replace('http', 'ws').replace('/room/', '/rooms/')
+        const socket = new WebSocket(wsUrl);
+        socket.addEventListener("message", (event) => {
+            const room = JSON.parse(event.data)
+            const userList = document.querySelectorAll('#users tbody')[0]
+            userList.innerHTML = ''
+            room.users
+                .filter(u => u.userType !== 'SPECTATOR')
+                .forEach(user => {
+                    const row = document.createElement('tr')
+                    const tdu = document.createElement('td')
+                    tdu.innerText = user.username
+                    row.appendChild(tdu)
+                    const tdc = document.createElement('td')
+                    tdc.innerText = user.cardValue
+                    row.appendChild(tdc)
+                    userList.appendChild(row)
+                })
+            document.getElementById('gamePhase').innerText = room.gamePhase === 'PLAYING' ? 'Playing' : 'Showing cards'
+            document.getElementById('average').innerText = room.average
+        });
+    };
+</script>
+<h1>{roomId} &ndash; <span id="gamePhase"></span></h1>
+<h2>Users</h2>
+<table id="users">
+    <thead>
+    <tr>
+        <th>Username</th>
+        <th>Card</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+<h2>Result</h2>
+<span id="average"></span>
+</html>

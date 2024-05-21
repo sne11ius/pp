@@ -94,15 +94,17 @@ func (tui *TUI) createUsersTable() *tview.Flex {
 	usernames := ""
 	cardValues := ""
 	for _, user := range tui.Room.Users {
-		usernames += user.Username
-		if user.YourUser {
-			usernames += " (*)"
-		}
-		usernames += "\n"
-		if user.CardValue == "" {
-			cardValues += "?\n"
-		} else {
-			cardValues += user.CardValue + "\n"
+		if user.UserType == Participant {
+			usernames += user.Username
+			if user.YourUser {
+				usernames += " (*)"
+			}
+			usernames += "\n"
+			if user.CardValue == "" {
+				cardValues += "?\n"
+			} else {
+				cardValues += user.CardValue + "\n"
+			}
 		}
 	}
 	usersText := tview.NewTextView().

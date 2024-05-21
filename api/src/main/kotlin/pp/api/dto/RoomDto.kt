@@ -31,18 +31,20 @@ data class RoomDto(
     val average: String,
     val log: List<LogEntry>,
 ) {
-    constructor(room: Room, yourUser: User) : this(
+    constructor(room: Room, yourUser: User? = null) : this(
         roomId = room.roomId,
         deck = room.deck,
         gamePhase = room.gamePhase,
         users = room.users.map { user ->
             UserDto(user, isYourUser = user == yourUser, room.gamePhase)
-        },
+        }.sortedBy { it.username },
         average = (if (room.gamePhase == CARDS_REVEALED) {
-            if (1 == room.users.groupBy { it.cardValue }.size && room.users.first().cardValue != null) {
-                room.users.first().cardValue!!
+            if (1 == room.participants
+                .groupBy { it.cardValue }.size && room.users.first().cardValue != null
+            ) {
+                room.participants.first().cardValue!!
             } else {
-                val hasSomeNoInt = room.users.any { it.cardValue?.toIntOrNull() == null }
+                val hasSomeNoInt = room.participants.any { it.cardValue?.toIntOrNull() == null }
                 room.users
                     .mapNotNull {
                         it.cardValue?.toIntOrNull()

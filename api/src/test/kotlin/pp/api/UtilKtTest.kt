@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test
 class UtilKtTest {
     @Test
     fun parseQuery() {
+        assertEquals(emptyMap<String, String>(), parseQuery(null))
+        assertEquals(emptyMap<String, String>(), parseQuery("nice&and"))
         assertEquals(emptyMap<String, String>(), parseQuery("whatsthis?"))
         assertEquals(emptyMap<String, String>(), parseQuery("nice="))
         assertEquals(emptyMap<String, String>(), parseQuery("=nice"))

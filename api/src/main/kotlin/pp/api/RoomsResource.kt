@@ -3,18 +3,25 @@ package pp.api
 import io.quarkus.logging.Log
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.Produces
+import jakarta.ws.rs.core.MediaType.APPLICATION_JSON
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.Response.temporaryRedirect
 import jakarta.ws.rs.core.UriInfo
+import pp.api.dto.RoomDto
 import java.net.URI
 import java.net.URLEncoder.encode
 import java.nio.charset.StandardCharsets.UTF_8
 
 /**
  * List and join rooms
+ *
+ * @param rooms
  */
 @Path("/rooms")
-class RoomsResource {
+class RoomsResource(
+    private val rooms: Rooms,
+) {
     /*
      * Portions of this file are derived from work licensed under the Apache License, Version 2.0
      * See the original file at http://www.apache.org/licenses/LICENSE-2.0
@@ -146,6 +153,7 @@ class RoomsResource {
      * @return a HTTP 307 temporary redirect with the websocket URL in the `Location` header
      */
     @Path("new")
+    @Produces(APPLICATION_JSON)
     @GET
     fun createRandomRoom(uri: UriInfo): Response {
         val roomId = saoItems.random() + " " + locations.random()
@@ -156,4 +164,13 @@ class RoomsResource {
         Log.info("Redirecting to $newUri")
         return temporaryRedirect(newUri).build()
     }
+
+    /**
+     * Get a JSON representation of all rooms
+     *
+     * @return all [pp.api.data.Room]s as [RoomDto]s
+     */
+    @GET
+    @Produces(APPLICATION_JSON)
+    fun getRooms(): List<RoomDto> = rooms.getRooms().sortedBy { it.roomId }.map { RoomDto(it) }
 }

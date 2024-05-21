@@ -4,6 +4,7 @@ import pp.api.data.GamePhase
 import pp.api.data.GamePhase.CARDS_REVEALED
 import pp.api.data.User
 import pp.api.data.UserType
+import pp.api.data.UserType.SPECTATOR
 
 /**
  * User representation for clients
@@ -28,7 +29,9 @@ data class UserDto(
         username = user.username,
         userType = user.userType,
         isYourUser = isYourUser,
-        cardValue = if (gamePhase == CARDS_REVEALED || isYourUser) {
+        cardValue = if (user.userType == SPECTATOR) {
+            ""
+        } else if (gamePhase == CARDS_REVEALED || isYourUser) {
             user.cardValue ?: ""
         } else {
             user.cardValue?.let {

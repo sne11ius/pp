@@ -38,7 +38,7 @@ type config struct {
 }
 
 var defaultConfig = config{
-	ServerURL: "http://localhost:8080",
+	ServerURL: "https://pp.discordia.network",
 	RoomID:    "",
 	User:      "",
 }

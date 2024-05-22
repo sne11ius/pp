@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.2](https://github.com/sne11ius/pp/compare/v0.0.1...v0.0.2) (2024-05-22)
+
+
+### Features
+
+* Fix release please action ([a311aea](https://github.com/sne11ius/pp/commit/a311aea1efff592fa58a69a560b997e06d5eaecb))
+
 ## 0.0.1 (2024-05-22)
 
 

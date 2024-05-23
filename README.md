@@ -53,9 +53,6 @@ See [Server API](./api/API.md) for description of the API.
   will receive either the updated game state in full (no problem since it's
   tiny), or an error message (eg. "Cannot play card now because not in playing
   phase")
-- Written in Kotlin, written in java if kotlin with quarkus is too much of a
-  headache
-- Compiled to native binary, optionally provide a docker image
 
 ## Client
 

@@ -15,12 +15,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Please do not change the following marker comments as they are used by the "release-please" github action.
-// See https://github.com/googleapis/release-please/blob/main/docs/customizing.md#updating-arbitrary-files
-// x-release-please-start-version
+// Updated via semantic-release-replace-plugin
 var version = "0.0.0"
-
-// x-release-please-end
 
 var commit = func() string {
 	if info, ok := debug.ReadBuildInfo(); ok {

@@ -55,7 +55,16 @@ const releaseConfig = {
       "verifyConditionsCmd": "./verify.sh",
       "publishCmd": "./publish.sh ${nextRelease.version}"
     }],
-    '@semantic-release/github'
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          { "path": "client/pp", "label": "pp client for linux" },
+          { "path": "CHANGELOG.md", "label": "Changelog" },
+          { "path": "LICENSE", "label": "License" },
+        ]
+      }
+    ]
   ]
 }
 

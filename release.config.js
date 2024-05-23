@@ -64,7 +64,8 @@ const releaseConfig = {
         ]
       }
     ]
-  ]
+  ],
+  "repositoryUrl": "git@github.com:sne11ius/pp.git"
 }
 
 module.exports = releaseConfig

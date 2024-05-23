@@ -32,7 +32,7 @@ const releaseConfig = {
             "to": "version = \"${nextRelease.version}\"",
             "results": [
               {
-                "file": "client/root.go",
+                "file": "api/build.gradle.kts",
                 "hasChanged": true,
                 "numMatches": 1,
                 "numReplacements": 1

@@ -41,6 +41,12 @@ jobs:
         uses: crazy-max/ghaction-upx@v3
         with:
           install-only: true
+      - name: setup ssh
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
       - name: Install semantic-release and plugins globally
         run: |
           npm install -g semantic-release
@@ -51,5 +57,5 @@ jobs:
       - name: Semantic release
         run: npx semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USER: ${{ github.actor }}

@@ -1,3 +1,10 @@
+# [0.2.0](https://github.com/sne11ius/pp/compare/v0.1.0...v0.2.0) (2024-05-23)
+
+
+### Features
+
+* update README to trigger release ([6b6eb43](https://github.com/sne11ius/pp/commit/6b6eb431d422373ce590003ef7eae1cb644c2a7c))
+
 # [0.1.0](https://github.com/sne11ius/pp/compare/v0.0.1...v0.1.0) (2024-05-23)
 
 

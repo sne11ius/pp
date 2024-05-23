@@ -52,7 +52,6 @@ const releaseConfig = {
       'message': 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}'
     }],
     ["@semantic-release/exec", {
-      "verifyConditionsCmd": "./verify.sh",
       "publishCmd": "./publish.sh ${nextRelease.version}"
     }],
     [

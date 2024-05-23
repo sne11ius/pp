@@ -47,6 +47,7 @@ jobs:
           npm install -g semantic-release-replace-plugin
           npm install -g @semantic-release/exec
           npm install -g @semantic-release/changelog
+          npm install -g @semantic-release/git
       - name: Semantic release
         run: npx semantic-release
         env:

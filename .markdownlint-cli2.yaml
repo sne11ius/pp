@@ -1,6 +1,9 @@
 gitignore: true
 
 config:
+  # CHANGELOGs do not conform D:
+  # see https://github.com/conventional-changelog/conventional-changelog/issues/615
+  MD001: false
   MD012:
     # Adjusted since release-please likes to generate two blank lines in changelogs
     # see https://github.com/googleapis/release-please/issues/2085

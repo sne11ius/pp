@@ -1,3 +1,10 @@
+## [0.2.1](https://github.com/sne11ius/pp/compare/v0.2.0...v0.2.1) (2024-05-24)
+
+
+### Bug Fixes
+
+* add `@RegisterForReflection` to `ReleaseInfo` ([b8c8c83](https://github.com/sne11ius/pp/commit/b8c8c83243ffb77e00643215aa94634d179643ac))
+
 # [0.2.0](https://github.com/sne11ius/pp/compare/v0.1.0...v0.2.0) (2024-05-23)
 
 

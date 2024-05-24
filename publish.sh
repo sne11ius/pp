@@ -3,7 +3,7 @@
 set -e
 
 cd client && go build -o pp
-# upx --best pp
+upx --best pp
 
 cd ..
 

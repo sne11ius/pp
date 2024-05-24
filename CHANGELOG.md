@@ -1,3 +1,10 @@
+## [0.2.2](https://github.com/sne11ius/pp/compare/v0.2.1...v0.2.2) (2024-05-24)
+
+
+### Bug Fixes
+
+* refix and test release-info ([5cec2f0](https://github.com/sne11ius/pp/commit/5cec2f0a9ce1094add30dd9847904c6ccb6ed4c2))
+
 ## [0.2.1](https://github.com/sne11ius/pp/compare/v0.2.0...v0.2.1) (2024-05-24)
 
 

@@ -16,6 +16,8 @@ config:
     siblings_only: true
   # see https://github.com/conventional-changelog/conventional-changelog/issues/615
   MD025: false
+  # see https://github.com/conventional-changelog/conventional-changelog/issues/615
+  MD041: false
 
 "$schema":
   "https://raw.githubusercontent.com/DavidAnson/markdownlint-cli2/main/schema/markdownlint-cli2-config-schema.json"

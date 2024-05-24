@@ -5,7 +5,31 @@ set -e
 # build backend
 cd ..
 docker build -f api/src/main/docker/Dockerfile.distroless-test -t pp/api-test .
-docker run --rm --name pp-test --detach -p 31337:8080 pp/api-test
+
+echo "Running Docker container..."
+container_id=$(docker run --rm --name pp-test --detach -p 31337:8080 pp/api-test)
+echo "Docker container started with ID: $container_id"
+
+# Wait for a few seconds to ensure the container is up and running
+echo "Waiting for the container to start..."
+sleep 10
+
+# Check container logs to see if the application started correctly
+echo "Fetching container logs..."
+docker logs "$container_id"
+
+# test info endpoint with verbose output
+echo "Testing info endpoint..."
+json_response=$(curl -s -v http://localhost:31337/release-info)
+echo "Response from endpoint: $json_response"
+
+if echo "$json_response" | grep -q "version"; then
+  echo "Some string found"
+else
+  echo "Some string not found"
+  docker stop "$container_id"
+  exit 1
+fi
 
 # build frontend
 cd client

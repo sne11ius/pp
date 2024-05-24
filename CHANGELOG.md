@@ -1,3 +1,10 @@
+## [0.2.3](https://github.com/sne11ius/pp/compare/v0.2.2...v0.2.3) (2024-05-24)
+
+
+### Bug Fixes
+
+* enable running behind proxy ([ca48442](https://github.com/sne11ius/pp/commit/ca48442d47b36a94ff4674ff17efcd9e1e965686))
+
 ## [0.2.2](https://github.com/sne11ius/pp/compare/v0.2.1...v0.2.2) (2024-05-24)
 
 

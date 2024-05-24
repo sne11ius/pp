@@ -2,6 +2,7 @@ package pp.api
 
 import io.quarkus.info.BuildInfo
 import io.quarkus.info.GitInfo
+import io.quarkus.runtime.annotations.RegisterForReflection
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
@@ -32,6 +33,8 @@ class ReleaseInfoResource(
      * @property githubLink Link the commit used to build this version on github
      * @property version Project version from the gradle project
      */
+    // see https://quarkus.io/guides/writing-native-applications-tips#registerForReflection
+    @RegisterForReflection(registerFullHierarchy = true)
     data class ReleaseInfo(
         val gitHash: String,
         val githubLink: String,

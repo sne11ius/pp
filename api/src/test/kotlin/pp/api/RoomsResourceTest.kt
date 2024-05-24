@@ -5,14 +5,18 @@ import io.quarkus.test.common.http.TestHTTPEndpoint
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType.JSON
+import jakarta.ws.rs.core.UriInfo
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.matchesPattern
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
+import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 import pp.api.data.Room
 import pp.api.data.User
 import pp.api.data.UserType.PARTICIPANT
+import java.net.URI
 
 /**
  * Test the [RoomsResource]
@@ -78,5 +82,27 @@ class RoomsResourceTest {
                 |"isYourUser":false,"cardValue":"✅"}],"average":"?","log":[]}]""".trimMargin().replace("\n", "")
                 )
             )
+    }
+
+    @Test
+    fun testEnforceScheme() {
+        val resource = RoomsResource(rooms)
+        val uriInfo: UriInfo = mock()
+        val uri: URI = mock()
+        whenever(uriInfo.requestUri).thenReturn(uri)
+        val resolvedUri: URI = mock()
+        whenever(uri.resolve(any<String>())).thenReturn(resolvedUri)
+
+        whenever(resolvedUri.toString()).thenReturn("http://example.com")
+        assertEquals("wss://example.com", resource.createRandomRoom(uriInfo).getHeaderString("Location"))
+
+        whenever(resolvedUri.toString()).thenReturn("https://example.com")
+        assertEquals("wss://example.com", resource.createRandomRoom(uriInfo).getHeaderString("Location"))
+
+        whenever(resolvedUri.toString()).thenReturn("http://localhost")
+        assertEquals("ws://localhost", resource.createRandomRoom(uriInfo).getHeaderString("Location"))
+
+        whenever(resolvedUri.toString()).thenReturn("http://127.0.0.1")
+        assertEquals("ws://127.0.0.1", resource.createRandomRoom(uriInfo).getHeaderString("Location"))
     }
 }

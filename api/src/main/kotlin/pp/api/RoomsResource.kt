@@ -159,7 +159,23 @@ class RoomsResource(
         val roomId = saoItems.random() + " " + locations.random()
         Log.info("Redirecting to new room $roomId")
         val redirectLocation = uri.requestUri.resolve(encode(roomId, UTF_8)).toString()
-        val wsRedirectLocation = redirectLocation.replace("http", "ws")
+        val wsRedirectLocation = redirectLocation
+            .replace("http", "ws")
+            .let { url ->
+                // Workaround for quarkus/nginx? messing up $scheme if we run behind a proxy.
+                // Theoretically, this should be fixed by the settings in `resources/application.properties`, but it
+                // just isn't.
+                // We just force `wss` unless called via local address.
+                if (url.startsWith("wss")) {
+                    url
+                } else {
+                    if (setOf("127.0.0.1", "localhost").any { it in url }) {
+                        url
+                    } else {
+                        url.replace("ws://", "wss://")
+                    }
+                }
+            }
         val newUri = URI(wsRedirectLocation)
         Log.info("Redirecting to $newUri")
         return temporaryRedirect(newUri).build()

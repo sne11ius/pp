@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/fatih/structs"
 	"github.com/spf13/viper"
@@ -17,8 +19,8 @@ func readGlobalConfig() {
 	// 3: config.yaml
 	// 4: defaults
 	config, err := readConfig()
-	if err != nil {
-		panic(err.Error())
+	if err != nil { // ignore.coverage
+		panic(err.Error()) // ignore.coverage
 	}
 
 	// Set config object for main package
@@ -34,19 +36,19 @@ func configInit() error {
 type config struct {
 	ServerURL string `mapstructure:"server" structs:"server" env:"SERVER"`
 	RoomID    string `mapstructure:"room" structs:"room" env:"ROOM"`
-	User      string `mapstructure:"user" structs:"user" env:"USER"`
+	Name      string `mapstructure:"name" structs:"name" env:"NAME"`
 }
 
 var defaultConfig = config{
 	ServerURL: "https://pp.discordia.network",
 	RoomID:    "",
-	User:      "",
+	Name:      "",
 }
 
 func cliFlags() {
 	rootCmd.PersistentFlags().StringP("server", "s", defaultConfig.ServerURL, "server url")
 	rootCmd.PersistentFlags().StringP("room", "r", defaultConfig.RoomID, "room id")
-	rootCmd.PersistentFlags().StringP("user", "u", defaultConfig.User, "username")
+	rootCmd.PersistentFlags().StringP("name", "n", defaultConfig.Name, "username")
 }
 
 // bindFlagsAndEnv will assign the environment variables to the cli parameters
@@ -80,17 +82,29 @@ func readConfig() (*config, error) {
 	}
 
 	// Read config from file
-	viper.SetConfigName("config")
+	viper.SetConfigName("pp.config")
+	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	home, err := os.UserHomeDir()
+	if err != nil { // ignore.coverage
+		return nil, err // ignore.coverage
+	}
+	viper.AddConfigPath(home)
+	viper.AddConfigPath(filepath.Join(home, ".config"))
+	if err := viper.ReadInConfig(); err == nil { // ignore.coverage
+		fmt.Println("Using config file:", viper.ConfigFileUsed()) // ignore.coverage
 	}
 
 	// Unmarshal config into struct
 	c := &config{}
-	err := viper.Unmarshal(c)
-	if err != nil {
-		return nil, err
+	err = viper.Unmarshal(c)
+	if err != nil { // ignore.coverage
+		return nil, err // ignore.coverage
+	}
+	if c.Name == "" {
+		if envValue, exists := os.LookupEnv("USER"); exists && c.Name == "" {
+			c.Name = envValue
+		}
 	}
 	return c, nil
 }

@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"log"
+	"os/exec"
 
 	"github.com/gdamore/tcell/v2"
 
@@ -49,7 +51,7 @@ func NewTUI() *TUI {
 			actionsArea, inputs := tui.createActionsArea()
 			tui.focusRotator.AddAll(inputs)
 			if isFirstDraw {
-				tui.focusRotator.SetFocusIndex(1) // Should be the first vote button
+				tui.focusRotator.SetFocusIndex(2) // Should be the first vote button
 				isFirstDraw = false
 			} else {
 				tui.focusRotator.SetFocusIndex(oldIndex)
@@ -68,11 +70,23 @@ func (tui *TUI) createHeader() (*tview.Flex, []inputCapturer) {
 	title.SetBorder(true)
 	title.SetText(tui.Room.RoomID)
 
+	copyButton := tview.NewButton("Copy room name")
+	copyButton.SetSelectedFunc(func() {
+		cmd := exec.Command("xclip", "-selection", "c")
+		cmd.Stdin = bytes.NewBufferString(tui.Room.RoomID)
+		err := cmd.Run()
+		if err != nil {
+			panic(err)
+		}
+	})
+
 	header := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
-		AddItem(title, 0, 10, true).
+		AddItem(title, 0, 10, false).
+		AddItem(copyButton, 0, 2, true).
+		AddItem(nil, 1, 0, false).
 		AddItem(quitButton, 0, 1, false)
-	return header, []inputCapturer{quitButton}
+	return header, []inputCapturer{copyButton, quitButton}
 }
 
 func (tui *TUI) createQuitButton() *tview.Button {
@@ -111,7 +125,7 @@ func (tui *TUI) createUsersTable() *tview.Flex {
 		SetWordWrap(false)
 	usersText.
 		SetBorder(true).
-		SetTitle("User").
+		SetTitle("Name").
 		SetTitleAlign(tview.AlignLeft)
 
 	_, err := usersText.Write([]byte(usernames))

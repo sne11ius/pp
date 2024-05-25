@@ -2,8 +2,8 @@
 
 set -e
 
-cd client && go build -o pp
-upx --best pp
+cd client && go build -trimpath -ldflags '-w -s' -o pp
+upx --ultra-brute --overlay=strip --strip-relocs=0 pp
 
 cd ..
 

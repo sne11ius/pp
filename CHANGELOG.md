@@ -1,3 +1,10 @@
+## [0.2.5](https://github.com/sne11ius/pp/compare/v0.2.4...v0.2.5) (2024-05-26)
+
+
+### Bug Fixes
+
+* replace `user` with `name` ([20f6b5b](https://github.com/sne11ius/pp/commit/20f6b5b71c11dc5b35bc863ef8f1768c97e63c9e))
+
 ## [0.2.4](https://github.com/sne11ius/pp/compare/v0.2.3...v0.2.4) (2024-05-24)
 
 

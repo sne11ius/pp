@@ -24,6 +24,13 @@ only webpage to watch the game:
   terminal.
 - **Lightweight:** Zero dependencies native binary.
 
+## Demo
+
+*asciinema seems not to handle unicode well, so please blame the slightly broken
+layout on them ;)
+
+[![asciicast](https://asciinema.org/a/661370.svg)](https://asciinema.org/a/661370)
+
 ## Installation
 
 pp is a single native executable and currently available for x86_64 based linux.
@@ -42,7 +49,7 @@ The following lines should have you running the latest version in no time
 curl -s https://api.github.com/repos/sne11ius/pp/releases/latest | \
   jq -r '.assets[] | select(.name == "pp") | .browser_download_url' | \
   xargs curl -L -o pp && \
-  chmod +x ./pp
+chmod +x ./pp
 ```
 
 ### From source
@@ -107,10 +114,6 @@ If no username is set, it defaults to `$USER`.
 Use env var `SERVER` or parameter `-s` (or `--server`) to connect a different
 server (default is `https://pp.discordia.network`):
 `SERVER=http://localhost:8080 ./pp`
-
-## Screenshots
-
-***Coming soon...***
 
 ## Contributing
 

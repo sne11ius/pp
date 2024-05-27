@@ -1,98 +1,136 @@
-# pp - Planning Poker
+# pp - Planning Poker in Your Terminal
 
-Simple client/server planning poker
-
-This project is in early development, so the documentation is geared towards
-developers.
+🎉 Welcome to **pp**! 🎉
 
 [![codecov](https://codecov.io/gh/sne11ius/pp/graph/badge.svg?token=PDADRFW5QB)](https://codecov.io/gh/sne11ius/pp)
 
-## Development
+## What is pp?
 
-### Prerequisites
+**pp** (Planning Poker) is a TUI (Text User Interface) application designed to
+make your estimation sessions efficient. No more distractions from flashy UIs –
+focus on what really matters: your team's estimates!
 
-commits/pushes are checked by github actions to verify every change conforms to
-our development guidelines. To make sure your changes can be merged and land in
-the next release, consider running the checks on each commit.
+Wowee! Your business overlords surely won't be able to run a TUI program, but
+still want to view the game in real time very much. That's why we created a read
+only webpage to watch the game:
+[https://pp.discordia.network](https://pp.discordia.network)
 
-An example commit hook can be found in [commit-hook.sh](commit-hook.sh). The script
-uses [docker](https://www.docker.com/) and [gradle](https://gradle.org/). But
-since these tools are also required to build the software itself, this should be
-fine.
+## Features
 
-Use the following script to install a git hook that checks your changes on each
-commit.
+- **Terminal-Based:** Runs directly in your terminal, keeping things simple and
+  distraction-free.
+- **Intuitive TUI:** User-friendly text interface that everyone can use.
+- **Collaborative:** Perfect for remote teams or those who love working in the
+  terminal.
+- **Lightweight:** Zero dependencies native binary.
 
-  ```bash
-  rm -f .git/hooks/commit-msg
-  cp ./commit-hook.sh .git/hooks/commit-msg
-  chmod +x .git/hooks/commit-msg
-  ```
+## Installation
 
-## Server
+pp is a single native executable and currently available for x86_64 based linux.
 
-See [server readme](./api/README.md) for a hint on how to build a docker image.
+### Download via browser
 
-See [Server API](./api/API.md) for description of the API.
+Head over to [Releases](https://github.com/sne11ius/pp/releases) and download
+the latest *pp client for linux* binary file. Don't forget to set the executable
+flag on the downloaded file.
 
-- No persistence
-- No UI
-- Websocket API
-- Rooms "just" exist as long as there's a user connected
-- Room settings (like list of available cards) cannot be changed, but can be
-  provided upon room creation
-- GET `rooms/new` → Create new random id and redirect to `rooms/{id}`
-- GET `rooms/new?{settings}` → Create new random id and redirect to
-  `rooms/{id}?{settings}`
-- GET `rooms/{id}?settings={settings}` → Create new room if not exists (settings
-  ignored if room already exists), establish WS connection
-- Available `{settings}` format tbd.
-- Default settings tbd.
-- Since this is a "game", we cannot allow the players to cheat. All state
-  managed by the server. Players can request a change (eg. "I play card 13") and
-  will receive either the updated game state in full (no problem since it's
-  tiny), or an error message (eg. "Cannot play card now because not in playing
-  phase")
+### Download via shell
 
-## Client
+The following lines should have you running the latest version in no time
 
-- Nice TUI client
-- Native executable
-- Filename is `pp` for ... planning poker
-- Zero required configuration or arguments
-- Default server URL tbd.
-- Run without args to create a new room: `pp`
-- Run with room id to join a room (will be created if not exists):
-  `pp my-room-id`, `pp "My convoluted room id"` or `pp "☠️ my danger room 🚨⚠️"`
-- Settings can be provided via file `$HOME/.config/pp.ini` (`ini` format,
-  obviously)
-- Possible settings include
+```shell
+curl -s https://api.github.com/repos/sne11ius/pp/releases/latest | \
+  jq -r '.assets[] | select(.name == "pp") | .browser_download_url' | \
+  xargs curl -L -o pp && \
+  chmod +x ./pp
+```
 
-  - Server to use
-  - Default room id
-  - username
-  - Some kind of "usertype", to distinguish "player" vs "observer"
+### From source
 
-- Written in golang or rust
-- There are some known libs from the golangiverse we could use:
+If you have [go](https://go.dev/) installed, you can also install directly from
+source:
 
-  - [tview](https://github.com/rivo/tview) for TUI
-  - [viper](https://github.com/spf13/viper) for configuration
+```shell
+go install github.com/sne11ius/pp/client@latest
+```
 
-## Meta
+## Usage
 
-- Go wild with commit hooks and linters:
+Fire up your terminal and start a planning poker session:
 
-  - Markdown files
-  - Code files (eg. `detekt`, `ktlint`, for kotlin. No idea what the
-    golang/rust ppl do)
-    - Side project: create a native binary exe for detekt, since running jvm
-      stuff on every commit is the worst
-  - Commit msgs - enforce conventional commits
+Running `pp` will pick up your `$USER`, connect to the default server and join
+a random room.
 
-- Version numbers, release notes auto generated from landed commits.
-- Every commit should strive for perfection
-- Exceptional documentation,
+If you want to have more control, you can use cli parameters, env variables or a
+configuration file.
+
+### Configuration file
+
+You can configure pp by creating a configuration file `pp.config.yaml` in
+
+- `$PWD` or
+- `$HOME` or
+- `$Home/.config`
+
+This example shows all available entries:
+
+```yaml
+# file pp.config.yaml
+
+# set a user name
+name: "💖🦋 my-user 🦋💖"
+# set a room name
+room: "☠️ my danger room 🚨⚠️"
+# set a custom server, in case you want to host your own server
+server: https://pp.my.gtld
+```
+
+### Env / Params
+
+You can also configure settings with env vars or cli parameters.
+
+#### Room
+
+Use env var `ROOM` or parameter `-r` (or `--room`) to join any room:
+`ROOM=my_room ./pp` or `./pp -r my_room` or `./pp --room "☠ my danger room 🚨⚠"`
+
+
+#### Username
+
+Use env var `NAME` or parameter `-n` (or `--name`) to set any username:
+`NAME=my_user ./pp` or `./pp -n my_user` or `./pp --name "🤭 😈 😌 🤪 😊 "`
+
+If no username is set, it defaults to `$USER`.
+
+#### Server
+
+Use env var `SERVER` or parameter `-s` (or `--server`) to connect a different
+server (default is `https://pp.discordia.network`):
+`SERVER=http://localhost:8080 ./pp`
+
+## Screenshots
+
+***Coming soon...***
+
+## Contributing
+
+***Make this a "how to dev" section or link to dedicated doc
+
+We ❤️ contributions! Here's how you can help:
+
+- Fork the repository
+- Create a new branch (`git checkout -b feature-foo`)
+- Commit your changes (`git commit -am 'feat: Add foo feature'`)
+- Push to the branch (`git push origin feature-foo`)
+- Create a new Pull Request
+
+## Acknowledgements
+
+Thanks to all our contributors and users who make pp better every day!
+
+Happy Planning! 🚀
+
+Your pp Team
 
 ## License
 

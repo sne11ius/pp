@@ -72,11 +72,14 @@ func (tui *TUI) createHeader() (*tview.Flex, []inputCapturer) {
 
 	copyButton := tview.NewButton("Copy room name")
 	copyButton.SetSelectedFunc(func() {
-		cmd := exec.Command("xclip", "-selection", "c")
-		cmd.Stdin = bytes.NewBufferString(tui.Room.RoomID)
-		err := cmd.Run()
-		if err != nil {
-			panic(err)
+		_, err := exec.LookPath("xclip")
+		if err == nil {
+			cmd := exec.Command("xclip", "-selection", "c")
+			cmd.Stdin = bytes.NewBufferString(tui.Room.RoomID)
+			err := cmd.Run()
+			if err != nil {
+				panic(err)
+			}
 		}
 	})
 

@@ -1,3 +1,10 @@
+## [0.2.6](https://github.com/sne11ius/pp/compare/v0.2.5...v0.2.6) (2024-05-28)
+
+
+### Bug Fixes
+
+* remove disconnects due to silence ([2e0a4c9](https://github.com/sne11ius/pp/commit/2e0a4c9182f00873afb7509b1fa568f1c18e8191))
+
 ## [0.2.5](https://github.com/sne11ius/pp/compare/v0.2.4...v0.2.5) (2024-05-26)
 
 

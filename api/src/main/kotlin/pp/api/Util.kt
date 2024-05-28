@@ -6,6 +6,10 @@ package pp.api
 
 import java.net.URLDecoder.decode
 import java.nio.charset.StandardCharsets
+import java.time.LocalTime
+import java.time.LocalTime.now
+import java.time.temporal.ChronoUnit.MILLIS
+import kotlin.time.Duration.Companion.minutes
 
 /**
  * Parses a query string.
@@ -29,3 +33,10 @@ fun parseQuery(query: String?): Map<String, String> {
         }
         .toMap()
 }
+
+/**
+ * Returns a time 3 minutes from [LocalTime.now]
+ *
+ * @return a time 3 minutes from [LocalTime.now]
+ */
+fun threeMinutesFromNow(): LocalTime = now().plus(3.minutes.inWholeMilliseconds, MILLIS)

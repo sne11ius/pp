@@ -31,6 +31,7 @@ dependencies {
     implementation("io.quarkus:quarkus-rest-jackson")
     implementation(libs.jackson.kotlin)
     implementation("io.quarkus:quarkus-websockets")
+    implementation("io.quarkus:quarkus-scheduler")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.quarkus:quarkus-arc")
     testImplementation("io.quarkus:quarkus-junit5")

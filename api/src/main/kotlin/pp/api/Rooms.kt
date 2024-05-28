@@ -1,7 +1,10 @@
 package pp.api
 
 import io.quarkus.logging.Log
+import io.quarkus.scheduler.Scheduled
 import jakarta.enterprise.context.ApplicationScoped
+import jakarta.websocket.CloseReason
+import jakarta.websocket.CloseReason.CloseCodes.VIOLATED_POLICY
 import jakarta.websocket.Session
 import pp.api.data.ChangeName
 import pp.api.data.ChatMessage
@@ -15,6 +18,9 @@ import pp.api.data.StartNewRound
 import pp.api.data.User
 import pp.api.data.UserRequest
 import pp.api.dto.RoomDto
+import java.io.IOException
+import java.nio.ByteBuffer
+import java.time.LocalTime.now
 import java.util.Collections.unmodifiableSet
 import java.util.concurrent.ConcurrentHashMap
 
@@ -54,6 +60,14 @@ class Rooms {
      */
     fun remove(session: Session) {
         get(session)?.let { (room, user) ->
+            try {
+                // Since we don't know the reason the user was removed, [VIOLATED_POLICY] seems to be the most generic
+                // result and we cannot give any reasonPhrase
+                user.session.close(CloseReason(VIOLATED_POLICY, null))
+            } catch (ignored: Exception) {
+                // Since we don't know the reason the user was removed, it might as well be because of a broken
+                // connection - so we cannot care for any errors here.
+            }
             Log.info("User ${user.username} left room ${room.roomId}")
             update(room - session)
         }
@@ -91,6 +105,57 @@ class Rooms {
             else -> {
                 // spotlessApply keeps generating this else if it doesnt exist
             }
+        }
+    }
+
+    /**
+     * Send pings to all connected users.
+     *
+     * Quarkus does not send pings by itself, so we schedule this method every minute. We then kick all users we could
+     * not ping successfully.
+     */
+    @Scheduled(every = "1m", delayed = "1m")
+    fun sendPings() {
+        allRooms
+            .fold(emptyList()) { usersWithErrors: List<User>, room ->
+                usersWithErrors + room.users.mapNotNull { user ->
+                    try {
+                        user.session.asyncRemote.sendPing(ByteBuffer.wrap("PING".toByteArray()))
+                        null
+                    } catch (_: IOException) {
+                        user
+                    }
+                }
+            }
+            .forEach { user ->
+                remove(user.session)
+            }
+    }
+
+    /**
+     * Removes all [User]s with [User.connectionDeadline] < [java.time.LocalTime.now]
+     *
+     * Since we update this value on every [jakarta.websocket.PongMessage], these are the users that did not send a pong
+     * in the last 3 minutes.
+     */
+    @Scheduled(every = "3m", delayed = "3m")
+    fun removeUnresponsiveUsers() {
+        val now = now()
+        allRooms
+            .flatMap { it.users }
+            .filter { it.connectionDeadline < now }
+            .forEach { user ->
+                Log.info("Kick user ${user.username}: did not respond to ping")
+                remove(user.session)
+            }
+    }
+
+    /**
+     * @param session
+     */
+    fun resetUserConnectionDeadline(session: Session) {
+        get(session)?.let { (_, user) ->
+            user.connectionDeadline = threeMinutesFromNow()
         }
     }
 

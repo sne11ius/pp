@@ -23,7 +23,10 @@ import pp.api.data.PlayCard
 import pp.api.data.RevealCards
 import pp.api.data.StartNewRound
 import pp.api.data.User
+import pp.api.data.UserType.PARTICIPANT
 import pp.api.data.UserType.SPECTATOR
+import java.io.IOException
+import java.time.LocalTime.now
 
 class RoomsTest {
     @Test
@@ -215,13 +218,19 @@ class RoomsTest {
         whenever(session.id).thenReturn("new-session-id")
         rooms.ensureRoomContainsUser("nice-id", user)
 
-        assertEquals(0, rooms.getRooms().first().log
-            .size)
+        assertEquals(
+            0, rooms.getRooms().first().log
+                .size
+        )
         rooms.submitUserRequest(ChatMessage("nice message"), session)
-        assertEquals(1, rooms.getRooms().first().log
-            .size)
-        assertEquals(LogEntry(CHAT, "[interesting user]: nice message"), rooms.getRooms().first().log
-            .first())
+        assertEquals(
+            1, rooms.getRooms().first().log
+                .size
+        )
+        assertEquals(
+            LogEntry(CHAT, "[interesting user]: nice message"), rooms.getRooms().first().log
+                .first()
+        )
     }
 
     @Test
@@ -235,11 +244,15 @@ class RoomsTest {
         whenever(session.id).thenReturn("new-session-id")
         rooms.ensureRoomContainsUser("nice-id", user)
 
-        assertEquals(0, rooms.getRooms().first().log
-            .size)
+        assertEquals(
+            0, rooms.getRooms().first().log
+                .size
+        )
         rooms.submitUserRequest(ChatMessage(""), session)
-        assertEquals(0, rooms.getRooms().first().log
-            .size)
+        assertEquals(
+            0, rooms.getRooms().first().log
+                .size
+        )
     }
 
     @Test
@@ -254,11 +267,15 @@ class RoomsTest {
         rooms.ensureRoomContainsUser("nice-id", user)
         val unknownSession = mock(Session::class.java)
         whenever(unknownSession.id).thenReturn("unknown-session-id")
-        assertEquals(0, rooms.getRooms().first().log
-            .size)
+        assertEquals(
+            0, rooms.getRooms().first().log
+                .size
+        )
         rooms.submitUserRequest(ChatMessage("nice message"), unknownSession)
-        assertEquals(0, rooms.getRooms().first().log
-            .size)
+        assertEquals(
+            0, rooms.getRooms().first().log
+                .size
+        )
     }
 
     @Test
@@ -307,8 +324,10 @@ class RoomsTest {
         // revealing when already revealed should do nothing
         rooms.submitUserRequest(RevealCards(), session)
         assertEquals(CARDS_REVEALED, rooms.getRooms().first().gamePhase)
-        assertEquals(1, rooms.getRooms().first().log
-            .size)
+        assertEquals(
+            1, rooms.getRooms().first().log
+                .size
+        )
         assertTrue(rooms.getRooms().first().log
             .all { it.level == INFO && "tried to change game phase" in it.message })
     }
@@ -369,11 +388,91 @@ class RoomsTest {
         // starting a new round when already playing should do nothing
         rooms.submitUserRequest(StartNewRound(), session)
         assertEquals(PLAYING, rooms.getRooms().first().gamePhase)
-        assertEquals("7", rooms.getRooms().first().users
-            .first().cardValue)
-        assertEquals(1, rooms.getRooms().first().log
-            .size)
+        assertEquals(
+            "7", rooms.getRooms().first().users
+                .first().cardValue
+        )
+        assertEquals(
+            1, rooms.getRooms().first().log
+                .size
+        )
         assertTrue(rooms.getRooms().first().log
             .all { it.level == INFO && "tried to change game phase" in it.message })
+    }
+
+    @Test
+    fun sendPingsRemovesUsersOnError() {
+        val rooms = Rooms()
+        val remoteWithPingError = mock(Async::class.java)
+        val sessionWithPingError = mock(Session::class.java)
+        whenever(sessionWithPingError.asyncRemote).thenReturn(remoteWithPingError)
+        whenever(remoteWithPingError.sendObject(any())).thenReturn(constantFuture(null))
+        whenever(remoteWithPingError.sendPing(any())).thenThrow(IOException("error"))
+        val errorUser = User("errorUser", PARTICIPANT, "7", sessionWithPingError)
+
+        val remoteWithoutPingError = mock(Async::class.java)
+        val sessionWithoutPingError = mock(Session::class.java)
+        whenever(sessionWithoutPingError.asyncRemote).thenReturn(remoteWithoutPingError)
+        whenever(remoteWithoutPingError.sendObject(any())).thenReturn(constantFuture(null))
+        whenever(sessionWithoutPingError.id).thenReturn("another-session-id")
+        val nonErrorUser = User("nonErrorUser", PARTICIPANT, "5", sessionWithoutPingError)
+
+        rooms.ensureRoomContainsUser("nice-id", errorUser)
+        rooms.ensureRoomContainsUser("nice-id", nonErrorUser)
+
+        rooms.sendPings()
+
+        assertEquals(1, rooms.getRooms().first().users
+            .size)
+        assertEquals(nonErrorUser.username, rooms.getRooms().first().users
+            .first().username)
+    }
+
+    @Test
+    fun removeUnresponsiveUsers() {
+        val rooms = Rooms()
+        val remote = mock(Async::class.java)
+        val session = mock(Session::class.java)
+        whenever(session.id).thenReturn("session-1")
+        whenever(session.asyncRemote).thenReturn(remote)
+        whenever(remote.sendObject(any())).thenReturn(constantFuture(null))
+        val normalUser = User("normal", PARTICIPANT, "7", session, now().plusSeconds(10))
+
+        val anotherRemote = mock(Async::class.java)
+        val anotherSession = mock(Session::class.java)
+        whenever(anotherSession.id).thenReturn("session-2")
+        whenever(anotherSession.asyncRemote).thenReturn(anotherRemote)
+        whenever(anotherSession.close(any())).thenThrow(IOException("err"))
+        whenever(anotherRemote.sendObject(any())).thenReturn(constantFuture(null))
+        val timeoutUser = User("timeout", PARTICIPANT, "7", anotherSession, now().minusMinutes(4))
+
+        rooms.ensureRoomContainsUser("nice-id", normalUser)
+        rooms.ensureRoomContainsUser("nice-id", timeoutUser)
+        rooms.removeUnresponsiveUsers()
+        assertEquals(1, rooms.getRooms().size)
+        assertEquals(normalUser.username, rooms.getRooms().first().users
+            .first().username)
+    }
+
+    @Test
+    fun resetUserConnectionDeadline() {
+        val rooms = Rooms()
+        val remote = mock(Async::class.java)
+        val session = mock(Session::class.java)
+        whenever(session.id).thenReturn("session-1")
+        whenever(session.asyncRemote).thenReturn(remote)
+        whenever(remote.sendObject(any())).thenReturn(constantFuture(null))
+        val now = now()
+        val normalUser = User("normal", PARTICIPANT, "7", session, now)
+
+        rooms.ensureRoomContainsUser("nice-id", normalUser)
+        rooms.resetUserConnectionDeadline(session)
+        assertTrue(rooms.getRooms().first().users
+            .first().connectionDeadline > now.plusMinutes(3))
+
+        // Now lets get that juicy 100% branch coverage on this method ;)
+        val unknownSession = mock(Session::class.java)
+        whenever(unknownSession.id).thenReturn("unknown-session")
+        rooms.resetUserConnectionDeadline(unknownSession)
     }
 }

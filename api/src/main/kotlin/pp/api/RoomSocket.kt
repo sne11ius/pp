@@ -9,6 +9,7 @@ import jakarta.websocket.OnClose
 import jakarta.websocket.OnError
 import jakarta.websocket.OnMessage
 import jakarta.websocket.OnOpen
+import jakarta.websocket.PongMessage
 import jakarta.websocket.Session
 import jakarta.websocket.server.PathParam
 import jakarta.websocket.server.ServerEndpoint
@@ -39,13 +40,28 @@ class RoomSocket(
      */
     @OnOpen
     fun onOpen(session: Session, @PathParam("roomId") roomId: String) {
-        rooms.ensureRoomContainsUser(decode(roomId, UTF_8), User(session))
+        rooms.ensureRoomContainsUser(
+            decode(roomId, UTF_8),
+            User(session),
+        )
     }
 
     /**
-     * Currently does nothing
+     * Resets the connection deadline of the [User] associated with the [session]
      *
-     * @param message the message sent
+     * @param ignored though we do nothing with this parameter, it is required by the framework to indicate this method
+     * wants to handle [PongMessage]s
+     * @param session session associated with the user
+     */
+    @OnMessage
+    fun onPongMessage(ignored: PongMessage, session: Session) {
+        rooms.resetUserConnectionDeadline(session)
+    }
+
+    /**
+     * Parses the JSON message into a [UserRequest] and submits it to the [rooms] together with the [session]
+     *
+     * @param message the message sent, must be a JSON representation of a [UserRequest]
      * @param session session associated with the user
      */
     @OnMessage

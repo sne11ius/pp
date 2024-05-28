@@ -3,6 +3,8 @@ package pp.api.data
 import jakarta.websocket.Session
 import pp.api.data.UserType.SPECTATOR
 import pp.api.parseQuery
+import pp.api.threeMinutesFromNow
+import java.time.LocalTime
 import java.util.concurrent.Future
 
 /*
@@ -772,12 +774,14 @@ private val funnyNames = listOf(
  * @property userType [UserType] of this user
  * @property cardValue card the user has played, might be `null` if the user hasn't played any card this round
  * @property session websocket session this user is associated with
+ * @property connectionDeadline
  */
 data class User(
     val username: String,
     val userType: UserType,
     val cardValue: String?,
     val session: Session,
+    var connectionDeadline: LocalTime = threeMinutesFromNow(),
 ) {
     /**
      * Create a new [User] for the given [Session]
@@ -792,7 +796,7 @@ data class User(
             } ?: SPECTATOR
         },
         cardValue = null,
-        session = session
+        session = session,
     )
 
     /**

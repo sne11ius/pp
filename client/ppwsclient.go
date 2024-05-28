@@ -42,16 +42,15 @@ func (client *PpWsClient) Start() error {
 		for msg := range client.channel {
 			err = c.WriteJSON(msg)
 			if err != nil { // ignore.coverage
-				return // ignore.coverage
+				log.Fatal(err) // ignore.coverage
 			}
 		}
 	}()
 	for {
 		err = c.ReadJSON(client.room)
 		client.onUpdate()
-		if err != nil {
-			log.Println("read error:", err) // ignore.coverage
-			return err                      // ignore.coverage
+		if err != nil { // ignore.coverage
+			log.Panic(err) // ignore.coverage
 		}
 	}
 }

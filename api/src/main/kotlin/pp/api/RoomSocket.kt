@@ -1,6 +1,6 @@
 package pp.api
 
-import com.fasterxml.jackson.core.JsonParseException
+import com.fasterxml.jackson.core.JacksonException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.quarkus.logging.Log
@@ -70,7 +70,7 @@ class RoomSocket(
         try {
             val request: UserRequest = mapper.readValue(message)
             rooms.submitUserRequest(request, session)
-        } catch (e: JsonParseException) {
+        } catch (e: JacksonException) {
             Log.error("Failed to parse message: $message", e)
         }
     }

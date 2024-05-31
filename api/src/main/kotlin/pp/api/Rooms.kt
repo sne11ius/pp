@@ -176,11 +176,15 @@ class Rooms {
         }
     }
 
-    private fun playCard(session: Session, cardValue: String) {
+    private fun playCard(session: Session, cardValue: String?) {
         get(session)?.let { (room, user) ->
             if (room.gamePhase == PLAYING) {
-                val updatedUser = user.copy(cardValue = cardValue)
-                update((room - session) withUser updatedUser)
+                if (cardValue != null && cardValue !in room.deck) {
+                    update(room withInfo "${user.username} tried to play card with illegal value: $cardValue")
+                } else {
+                    val updatedUser = user.copy(cardValue = cardValue)
+                    update((room - session) withUser updatedUser)
+                }
             } else {
                 update(room withInfo "${user.username} tried to play card while no round was in progress")
             }

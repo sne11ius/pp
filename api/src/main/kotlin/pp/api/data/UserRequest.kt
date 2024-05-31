@@ -77,7 +77,7 @@ sealed class UserRequest(
  *   The card value to play
  */
 data class PlayCard(
-    val cardValue: String,
+    val cardValue: String?,
 ) : UserRequest(PLAY_CARD)
 
 /**

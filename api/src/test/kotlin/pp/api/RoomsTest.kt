@@ -155,7 +155,7 @@ class RoomsTest {
     }
 
     @Test
-    fun submitUserRequestPlayCard() {
+    fun submitUserRequestIllegalPlayCard() {
         val rooms = Rooms()
         val remote = mock(Async::class.java)
         val session = mock(Session::class.java)
@@ -171,7 +171,56 @@ class RoomsTest {
         )
         rooms.submitUserRequest(PlayCard("19"), session)
         assertEquals(
-            "19", rooms.getRooms().first().users
+            null, rooms.getRooms().first().users
+                .first().cardValue
+        )
+    }
+
+    @Test
+    fun submitUserRequestLegalPlayCard() {
+        val rooms = Rooms()
+        val remote = mock(Async::class.java)
+        val session = mock(Session::class.java)
+        whenever(session.asyncRemote).thenReturn(remote)
+        whenever(remote.sendObject(any())).thenReturn(constantFuture(null))
+        val user = User("username", SPECTATOR, null, session)
+        whenever(session.id).thenReturn("new-session-id")
+        rooms.ensureRoomContainsUser("nice-id", user)
+
+        assertNull(
+            rooms.getRooms().first().users
+                .first().cardValue
+        )
+        rooms.submitUserRequest(PlayCard("5"), session)
+        assertEquals(
+            "5", rooms.getRooms().first().users
+                .first().cardValue
+        )
+    }
+
+    @Test
+    fun submitUserRequestResetCard() {
+        val rooms = Rooms()
+        val remote = mock(Async::class.java)
+        val session = mock(Session::class.java)
+        whenever(session.asyncRemote).thenReturn(remote)
+        whenever(remote.sendObject(any())).thenReturn(constantFuture(null))
+        val user = User("username", SPECTATOR, null, session)
+        whenever(session.id).thenReturn("new-session-id")
+        rooms.ensureRoomContainsUser("nice-id", user)
+
+        assertNull(
+            rooms.getRooms().first().users
+                .first().cardValue
+        )
+        rooms.submitUserRequest(PlayCard("5"), session)
+        assertEquals(
+            "5", rooms.getRooms().first().users
+                .first().cardValue
+        )
+        rooms.submitUserRequest(PlayCard(null), session)
+        assertEquals(
+            null, rooms.getRooms().first().users
                 .first().cardValue
         )
     }
@@ -191,7 +240,7 @@ class RoomsTest {
             rooms.getRooms().first().users
                 .first().cardValue
         )
-        rooms.submitUserRequest(PlayCard("19"), session)
+        rooms.submitUserRequest(PlayCard("3"), session)
 
         val unknownSession = mock(Session::class.java)
         whenever(unknownSession.id).thenReturn("unknown-session-id")
@@ -202,7 +251,7 @@ class RoomsTest {
                 .first().username
         )
         assertEquals(
-            "19", rooms.getRooms().first().users
+            "3", rooms.getRooms().first().users
                 .first().cardValue
         )
     }
@@ -368,9 +417,9 @@ class RoomsTest {
             rooms.getRooms().first().users
                 .first().cardValue
         )
-        rooms.submitUserRequest(PlayCard("19"), session)
+        rooms.submitUserRequest(PlayCard("5"), session)
         assertEquals(
-            "19", rooms.getRooms().first().users
+            "5", rooms.getRooms().first().users
                 .first().cardValue
         )
     }

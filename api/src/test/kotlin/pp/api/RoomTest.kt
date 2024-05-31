@@ -16,6 +16,7 @@ import pp.api.data.LogLevel
 import pp.api.data.Room
 import pp.api.data.User
 import pp.api.data.UserType.SPECTATOR
+import pp.api.data.info
 
 class RoomTest {
     @Test
@@ -102,8 +103,18 @@ class RoomTest {
         val session = mock(Session::class.java)
         whenever(session.id).thenReturn("nice-id")
         val user = User("user", SPECTATOR, "?", session)
-        val room = Room("nice-id", listOf(user))
-        assertTrue(room.minus(session).isEmpty())
+        val room = Room(
+            roomId = "nice-id",
+            users = listOf(user),
+            deck = listOf("nice", "card"),
+            gamePhase = CARDS_REVEALED,
+            log = listOf(info("nice message"))
+        )
+        val roomWithoutUser = room.minus(session)
+        assertTrue(roomWithoutUser.isEmpty())
+        assertEquals(listOf("nice", "card"), roomWithoutUser.deck)
+        assertEquals(CARDS_REVEALED, roomWithoutUser.gamePhase)
+        assertEquals(listOf(info("nice message")), roomWithoutUser.log)
 
         val unknownSession = mock(Session::class.java)
         whenever(unknownSession.id).thenReturn("another-id")

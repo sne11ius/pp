@@ -1,3 +1,10 @@
+## [0.2.7](https://github.com/sne11ius/pp/compare/v0.2.6...v0.2.7) (2024-05-31)
+
+
+### Bug Fixes
+
+* users cannot play illegal cards anymore ([e206769](https://github.com/sne11ius/pp/commit/e206769fe837a6838fa7be64e610a10cd59e12f0))
+
 ## [0.2.6](https://github.com/sne11ius/pp/compare/v0.2.5...v0.2.6) (2024-05-28)
 
 

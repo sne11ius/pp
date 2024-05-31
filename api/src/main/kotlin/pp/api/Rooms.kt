@@ -50,7 +50,7 @@ class Rooms {
             Log.info("Creating room $roomId")
             Room(roomId)
         }
-        update(room withUser user)
+        update(room withUser user withInfo "User ${user.username} joined")
     }
 
     /**
@@ -171,8 +171,9 @@ class Rooms {
 
     private fun changeName(session: Session, name: String) {
         get(session)?.let { (room, user) ->
-            val updatedUser = user.copy(username = name)
-            update((room - session) withUser updatedUser)
+            val updatedRoom = room withInfo "User ${user.username} changed name to $name"
+            user.username = name
+            update(updatedRoom)
         }
     }
 
@@ -182,8 +183,8 @@ class Rooms {
                 if (cardValue != null && cardValue !in room.deck) {
                     update(room withInfo "${user.username} tried to play card with illegal value: $cardValue")
                 } else {
-                    val updatedUser = user.copy(cardValue = cardValue)
-                    update((room - session) withUser updatedUser)
+                    user.cardValue = cardValue
+                    update(room)
                 }
             } else {
                 update(room withInfo "${user.username} tried to play card while no round was in progress")
@@ -219,7 +220,8 @@ class Rooms {
                         }
                     )
                 }
-                update(updatedRoom)
+                val message = if (newGamePhase == CARDS_REVEALED) "revealed the cards" else "started a new round"
+                update(updatedRoom withInfo "${user.username} $message}")
             } else {
                 val error = "${user.username} tried to change game phase to $newGamePhase, but that's illegal"
                 update(room withInfo error)

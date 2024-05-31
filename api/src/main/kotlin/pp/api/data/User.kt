@@ -777,9 +777,9 @@ private val funnyNames = listOf(
  * @property connectionDeadline
  */
 data class User(
-    val username: String,
-    val userType: UserType,
-    val cardValue: String?,
+    var username: String,
+    var userType: UserType,
+    var cardValue: String?,
     val session: Session,
     var connectionDeadline: LocalTime = threeMinutesFromNow(),
 ) {

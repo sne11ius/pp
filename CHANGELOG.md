@@ -1,3 +1,16 @@
+# [0.3.0](https://github.com/sne11ius/pp/compare/v0.2.8...v0.3.0) (2024-05-31)
+
+
+### Bug Fixes
+
+* remove extra '}' in log message ([4e90c6b](https://github.com/sne11ius/pp/commit/4e90c6b7b42f5f247fcea703cc31008c22487716))
+* stop users from resetting rooms by leaving ([d2232ce](https://github.com/sne11ius/pp/commit/d2232cedf2fcec976d1fbd46570e5fb84d36adc4))
+
+
+### Features
+
+* add a log message when a user leaves a room ([c808109](https://github.com/sne11ius/pp/commit/c8081092e27eeba40e4b9b626f8366d28b177b7a))
+
 ## [0.2.8](https://github.com/sne11ius/pp/compare/v0.2.7...v0.2.8) (2024-05-31)
 
 

@@ -16,7 +16,7 @@ import (
 )
 
 // Updated via semantic-release-replace-plugin
-var version = "0.2.8"
+var version = "0.3.0"
 
 var commit = func() string {
 	if info, ok := debug.ReadBuildInfo(); ok {

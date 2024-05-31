@@ -268,17 +268,16 @@ class RoomsTest {
         rooms.ensureRoomContainsUser("nice-id", user)
 
         assertEquals(
-            0, rooms.getRooms().first().log
+            1, rooms.getRooms().first().log
                 .size
         )
         rooms.submitUserRequest(ChatMessage("nice message"), session)
         assertEquals(
-            1, rooms.getRooms().first().log
+            2, rooms.getRooms().first().log
                 .size
         )
         assertEquals(
-            LogEntry(CHAT, "[interesting user]: nice message"), rooms.getRooms().first().log
-                .first()
+            LogEntry(CHAT, "[interesting user]: nice message"), rooms.getRooms().first().log[1]
         )
     }
 
@@ -294,12 +293,12 @@ class RoomsTest {
         rooms.ensureRoomContainsUser("nice-id", user)
 
         assertEquals(
-            0, rooms.getRooms().first().log
+            1, rooms.getRooms().first().log
                 .size
         )
         rooms.submitUserRequest(ChatMessage(""), session)
         assertEquals(
-            0, rooms.getRooms().first().log
+            1, rooms.getRooms().first().log
                 .size
         )
     }
@@ -317,12 +316,12 @@ class RoomsTest {
         val unknownSession = mock(Session::class.java)
         whenever(unknownSession.id).thenReturn("unknown-session-id")
         assertEquals(
-            0, rooms.getRooms().first().log
+            1, rooms.getRooms().first().log
                 .size
         )
         rooms.submitUserRequest(ChatMessage("nice message"), unknownSession)
         assertEquals(
-            0, rooms.getRooms().first().log
+            1, rooms.getRooms().first().log
                 .size
         )
     }
@@ -374,11 +373,11 @@ class RoomsTest {
         rooms.submitUserRequest(RevealCards(), session)
         assertEquals(CARDS_REVEALED, rooms.getRooms().first().gamePhase)
         assertEquals(
-            1, rooms.getRooms().first().log
+            3, rooms.getRooms().first().log
                 .size
         )
         assertTrue(rooms.getRooms().first().log
-            .all { it.level == INFO && "tried to change game phase" in it.message })
+            .any { it.level == INFO && "tried to change game phase" in it.message })
     }
 
     @Test
@@ -442,11 +441,11 @@ class RoomsTest {
                 .first().cardValue
         )
         assertEquals(
-            1, rooms.getRooms().first().log
+            2, rooms.getRooms().first().log
                 .size
         )
         assertTrue(rooms.getRooms().first().log
-            .all { it.level == INFO && "tried to change game phase" in it.message })
+            .any { it.level == INFO && "tried to change game phase" in it.message })
     }
 
     @Test
@@ -471,10 +470,14 @@ class RoomsTest {
 
         rooms.sendPings()
 
-        assertEquals(1, rooms.getRooms().first().users
-            .size)
-        assertEquals(nonErrorUser.username, rooms.getRooms().first().users
-            .first().username)
+        assertEquals(
+            1, rooms.getRooms().first().users
+                .size
+        )
+        assertEquals(
+            nonErrorUser.username, rooms.getRooms().first().users
+                .first().username
+        )
     }
 
     @Test
@@ -499,8 +502,10 @@ class RoomsTest {
         rooms.ensureRoomContainsUser("nice-id", timeoutUser)
         rooms.removeUnresponsiveUsers()
         assertEquals(1, rooms.getRooms().size)
-        assertEquals(normalUser.username, rooms.getRooms().first().users
-            .first().username)
+        assertEquals(
+            normalUser.username, rooms.getRooms().first().users
+                .first().username
+        )
     }
 
     @Test
@@ -516,8 +521,10 @@ class RoomsTest {
 
         rooms.ensureRoomContainsUser("nice-id", normalUser)
         rooms.resetUserConnectionDeadline(session)
-        assertTrue(rooms.getRooms().first().users
-            .first().connectionDeadline > now.plusMinutes(3))
+        assertTrue(
+            rooms.getRooms().first().users
+                .first().connectionDeadline > now.plusMinutes(3)
+        )
 
         // Now lets get that juicy 100% branch coverage on this method ;)
         val unknownSession = mock(Session::class.java)

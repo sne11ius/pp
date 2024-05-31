@@ -1,3 +1,10 @@
+## [0.2.8](https://github.com/sne11ius/pp/compare/v0.2.7...v0.2.8) (2024-05-31)
+
+
+### Bug Fixes
+
+* remove misleading log messages ([44f90c9](https://github.com/sne11ius/pp/commit/44f90c9b843a6c158dfb518a6b6d77595c77a2ad))
+
 ## [0.2.7](https://github.com/sne11ius/pp/compare/v0.2.6...v0.2.7) (2024-05-31)
 
 

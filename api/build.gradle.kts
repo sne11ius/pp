@@ -45,7 +45,7 @@ dependencies {
 group = "pp"
 
 // Updated via semantic-release-replace-plugin
-version = "0.2.7"
+version = "0.2.8"
 
 java {
     sourceCompatibility = VERSION_21

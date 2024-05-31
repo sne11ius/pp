@@ -69,7 +69,7 @@ class Rooms {
                 // connection - so we cannot care for any errors here.
             }
             Log.info("User ${user.username} left room ${room.roomId}")
-            update(room - session)
+            update(room - session withInfo "User ${user.username} left")
         }
     }
 

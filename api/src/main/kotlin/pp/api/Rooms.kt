@@ -221,7 +221,7 @@ class Rooms {
                     )
                 }
                 val message = if (newGamePhase == CARDS_REVEALED) "revealed the cards" else "started a new round"
-                update(updatedRoom withInfo "${user.username} $message}")
+                update(updatedRoom withInfo "${user.username} $message")
             } else {
                 val error = "${user.username} tried to change game phase to $newGamePhase, but that's illegal"
                 update(room withInfo error)

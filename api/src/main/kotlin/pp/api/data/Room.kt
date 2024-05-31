@@ -82,11 +82,9 @@ class Room(
      */
     operator fun minus(session: Session): Room {
         val user = this.findUserWithSession(session)
-        return user
-            ?.let {
-                this.copy(users = this.users - user)
-            }
-            ?: this
+        return user?.let {
+            this.copy(users = this.users - user)
+        } ?: this
     }
 
     /**

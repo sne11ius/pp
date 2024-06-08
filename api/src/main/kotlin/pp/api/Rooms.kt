@@ -8,9 +8,8 @@ import jakarta.websocket.CloseReason.CloseCodes.VIOLATED_POLICY
 import jakarta.websocket.Session
 import pp.api.data.ChangeName
 import pp.api.data.ChatMessage
-import pp.api.data.GamePhase
-import pp.api.data.GamePhase.CARDS_REVEALED
-import pp.api.data.GamePhase.PLAYING
+import pp.api.data.GamePhase.CardsRevealed
+import pp.api.data.GamePhase.Playing
 import pp.api.data.PlayCard
 import pp.api.data.RevealCards
 import pp.api.data.Room
@@ -100,8 +99,8 @@ class Rooms {
             is ChangeName -> changeName(session, request.name)
             is PlayCard -> playCard(session, request.cardValue)
             is ChatMessage -> chatMessage(session, request.message)
-            is RevealCards -> changeGamePhase(session, CARDS_REVEALED)
-            is StartNewRound -> changeGamePhase(session, PLAYING)
+            is RevealCards -> changeGamePhaseToCardsRevealed(session)
+            is StartNewRound -> changeGamePhaseToPlaying(session)
             else -> {
                 // spotlessApply keeps generating this else if it doesnt exist
             }
@@ -179,7 +178,7 @@ class Rooms {
 
     private fun playCard(session: Session, cardValue: String?) {
         get(session)?.let { (room, user) ->
-            if (room.gamePhase == PLAYING) {
+            if (room.gamePhase is Playing) {
                 if (cardValue != null && cardValue !in room.deck) {
                     update(room withInfo "${user.username} tried to play card with illegal value: $cardValue")
                 } else {
@@ -200,32 +199,27 @@ class Rooms {
         }
     }
 
-    private fun changeGamePhase(session: Session, newGamePhase: GamePhase) {
+    private fun changeGamePhaseToPlaying(session: Session) {
         get(session)?.let { (room, user) ->
-            val canRevealCards = room.gamePhase == PLAYING && newGamePhase == CARDS_REVEALED
-            val canStartNextRound = room.gamePhase == CARDS_REVEALED && newGamePhase == PLAYING
-
-            if (canRevealCards || canStartNextRound) {
+            if (room.gamePhase is CardsRevealed) {
                 val updatedRoom = room.run {
                     copy(
-                        gamePhase = newGamePhase,
-                        users = if (newGamePhase == CARDS_REVEALED) {
-                            users
-                        } else {
-                            users.map { user ->
-                                user.copy(
-                                    cardValue = null
-                                )
-                            }
+                        gamePhase = Playing,
+                        users = users.map { user ->
+                            user.copy(
+                                cardValue = null
+                            )
                         }
                     )
                 }
-                val message = if (newGamePhase == CARDS_REVEALED) "revealed the cards" else "started a new round"
-                update(updatedRoom withInfo "${user.username} $message")
-            } else {
-                val error = "${user.username} tried to change game phase to $newGamePhase, but that's illegal"
-                update(room withInfo error)
+                update(updatedRoom withInfo "${user.username} started a new round")
             }
+        }
+    }
+
+    private fun changeGamePhaseToCardsRevealed(session: Session) {
+        get(session)?.let { (room, user) ->
+            update(room withCardsRevealedBy user)
         }
     }
 

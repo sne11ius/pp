@@ -14,8 +14,8 @@ import org.mockito.Mockito.mock
 import org.mockito.kotlin.whenever
 import pp.api.data.ChangeName
 import pp.api.data.ChatMessage
-import pp.api.data.GamePhase.CARDS_REVEALED
-import pp.api.data.GamePhase.PLAYING
+import pp.api.data.GamePhase.CardsRevealed
+import pp.api.data.GamePhase.Playing
 import pp.api.data.LogEntry
 import pp.api.data.LogLevel.CHAT
 import pp.api.data.LogLevel.INFO
@@ -337,9 +337,9 @@ class RoomsTest {
         whenever(session.id).thenReturn("new-session-id")
         rooms.ensureRoomContainsUser("nice-id", user)
 
-        assertEquals(PLAYING, rooms.getRooms().first().gamePhase)
+        assertEquals(Playing, rooms.getRooms().first().gamePhase)
         rooms.submitUserRequest(RevealCards(), session)
-        assertEquals(CARDS_REVEALED, rooms.getRooms().first().gamePhase)
+        assertTrue(rooms.getRooms().first().gamePhase is CardsRevealed)
 
         // Playing cards should not be possible now
         rooms.submitUserRequest(PlayCard("nice card"), session)
@@ -358,7 +358,7 @@ class RoomsTest {
     }
 
     @Test
-    fun submitUserRevealCardsWhenAlreadyRevealedAddsInfoMessage() {
+    fun submitUserRevealCardsWhenAlreadyRevealedDoesNothing() {
         val rooms = Rooms()
         val remote = mock(Async::class.java)
         val session = mock(Session::class.java)
@@ -368,16 +368,14 @@ class RoomsTest {
         whenever(session.id).thenReturn("new-session-id")
         rooms.ensureRoomContainsUser("nice-id", user)
         rooms.submitUserRequest(RevealCards(), session)
-        assertEquals(CARDS_REVEALED, rooms.getRooms().first().gamePhase)
+        assertTrue(rooms.getRooms().first().gamePhase is CardsRevealed)
         // revealing when already revealed should do nothing
         rooms.submitUserRequest(RevealCards(), session)
-        assertEquals(CARDS_REVEALED, rooms.getRooms().first().gamePhase)
+        assertTrue(rooms.getRooms().first().gamePhase is CardsRevealed)
         assertEquals(
-            3, rooms.getRooms().first().log
+            2, rooms.getRooms().first().log
                 .size
         )
-        assertTrue(rooms.getRooms().first().log
-            .any { it.level == INFO && "tried to change game phase" in it.message })
     }
 
     @Test
@@ -394,7 +392,7 @@ class RoomsTest {
         val unknownSession = mock(Session::class.java)
         whenever(unknownSession.id).thenReturn("unknown-session-id")
         rooms.submitUserRequest(RevealCards(), unknownSession)
-        assertEquals(PLAYING, rooms.getRooms().first().gamePhase)
+        assertEquals(Playing, rooms.getRooms().first().gamePhase)
     }
 
     @Test
@@ -408,9 +406,9 @@ class RoomsTest {
         whenever(session.id).thenReturn("new-session-id")
         rooms.ensureRoomContainsUser("nice-id", user)
 
-        assertEquals(PLAYING, rooms.getRooms().first().gamePhase)
+        assertEquals(Playing, rooms.getRooms().first().gamePhase)
         rooms.submitUserRequest(RevealCards(), session)
-        assertEquals(CARDS_REVEALED, rooms.getRooms().first().gamePhase)
+        assertTrue(rooms.getRooms().first().gamePhase is CardsRevealed)
         rooms.submitUserRequest(StartNewRound(), session)
         assertNull(
             rooms.getRooms().first().users
@@ -435,17 +433,15 @@ class RoomsTest {
         rooms.ensureRoomContainsUser("nice-id", user)
         // starting a new round when already playing should do nothing
         rooms.submitUserRequest(StartNewRound(), session)
-        assertEquals(PLAYING, rooms.getRooms().first().gamePhase)
+        assertEquals(Playing, rooms.getRooms().first().gamePhase)
         assertEquals(
             "7", rooms.getRooms().first().users
                 .first().cardValue
         )
         assertEquals(
-            2, rooms.getRooms().first().log
+            1, rooms.getRooms().first().log
                 .size
         )
-        assertTrue(rooms.getRooms().first().log
-            .any { it.level == INFO && "tried to change game phase" in it.message })
     }
 
     @Test

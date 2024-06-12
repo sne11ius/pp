@@ -68,6 +68,8 @@ func (tui *TUI) createHeader() (*tview.Flex, []inputCapturer) {
 	title := tview.NewTextView().
 		SetDynamicColors(true)
 	title.SetBorder(true)
+	title.SetTitle("Room")
+	title.SetTitleAlign(tview.AlignLeft)
 	title.SetText(tui.Room.RoomID)
 
 	copyButton := tview.NewButton("Copy room name")

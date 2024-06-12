@@ -9,7 +9,10 @@ import java.nio.charset.StandardCharsets
 import java.time.LocalTime
 import java.time.LocalTime.now
 import java.time.temporal.ChronoUnit.MILLIS
+import kotlin.random.Random
 import kotlin.time.Duration.Companion.minutes
+
+private val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray()
 
 /**
  * Parses a query string.
@@ -40,3 +43,17 @@ fun parseQuery(query: String?): Map<String, String> {
  * @return a time 3 minutes from [LocalTime.now]
  */
 fun threeMinutesFromNow(): LocalTime = now().plus(3.minutes.inWholeMilliseconds, MILLIS)
+
+/**
+ * Generate a random string of given length.
+ *
+ * @param length length of the string to generate
+ * @return a randome string of the given length, consisting of A-Za-z0-9
+ */
+fun generateRandomId(length: Int = 6): String {
+    val sb = StringBuilder(length)
+    repeat(length) {
+        sb.append(chars[Random.nextInt(chars.size)])
+    }
+    return sb.toString()
+}

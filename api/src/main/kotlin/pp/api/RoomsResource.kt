@@ -188,5 +188,13 @@ class RoomsResource(
      */
     @GET
     @Produces(APPLICATION_JSON)
-    fun getRooms(): List<RoomDto> = rooms.getRooms().sortedBy { it.roomId }.map { RoomDto(it) }
+    fun getRooms(): List<RoomDto> = rooms
+        .getRooms()
+        .sortedBy { it.roomId }
+        .map {
+            RoomDto(
+                room = it,
+                yourUser = null
+            )
+        }
 }

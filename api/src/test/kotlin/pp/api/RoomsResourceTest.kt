@@ -53,19 +53,19 @@ class RoomsResourceTest {
     }
 
     @Test
+    @Suppress("TOO_LONG_FUNCTION", "I think its ok :D")
     fun getRoomsWithUser() {
+        val user = User(
+            username = "username",
+            userType = PARTICIPANT,
+            cardValue = "19",
+            session = mock(),
+        )
         whenever(rooms.getRooms()).thenReturn(
             setOf(
                 Room(
                     roomId = "roomId",
-                    users = listOf(
-                        User(
-                            username = "username",
-                            userType = PARTICIPANT,
-                            cardValue = "19",
-                            session = mock(),
-                        )
-                    )
+                    users = listOf(user)
                 )
             )
         )
@@ -79,7 +79,50 @@ class RoomsResourceTest {
                 equalTo(
                     """[{"roomId":"roomId","deck":["1","2","3","5","8","13","☕"],
                 |"gamePhase":"PLAYING","users":[{"username":"username","userType":"PARTICIPANT",
-                |"isYourUser":false,"cardValue":"✅"}],"average":"?","log":[]}]""".trimMargin().replace("\n", "")
+                |"isYourUser":false,"cardValue":"✅","id":"${user.id}"}],"average":"?","log":[],"gameResult":null}]"""
+                        .trimMargin()
+                        .replace("\n", "")
+                )
+            )
+    }
+
+    @Test
+    @Suppress("TOO_LONG_FUNCTION", "I think its ok :D")
+    fun getRoomsWithRevealedCards() {
+        val user = User(
+            username = "username",
+            userType = PARTICIPANT,
+            cardValue = "19",
+            session = mock(),
+        )
+        whenever(rooms.getRooms()).thenReturn(
+            setOf(
+                Room(
+                    roomId = "roomId",
+                ) withUser user withCardsRevealedBy user
+            )
+        )
+
+        given()
+            .get()
+            .then()
+            .statusCode(200)
+            .contentType(JSON)
+            .body(
+                equalTo(
+                    """[{"roomId":"roomId",
+                        |"deck":["1","2","3","5","8","13","☕"],
+                        |"gamePhase":"CARDS_REVEALED",
+                        |"users":[
+                        |{"username":"username","userType":"PARTICIPANT",
+                        |"isYourUser":false,"cardValue":"19","id":"${user.id}"}],
+                        |"average":"19",
+                        |"log":[{"level":"INFO","message":"username revealed the cards"}],
+                        |"gameResult":{"cards":[{"playedBy":{"username":"username","id":"${user.id}"},
+                        |"value":"19"}],
+                        |"average":"19"}}]"""
+                        .trimMargin()
+                        .replace("\n", "")
                 )
             )
     }

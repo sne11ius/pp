@@ -68,6 +68,8 @@ func (tui *TUI) createHeader() (*tview.Flex, []inputCapturer) {
 	title := tview.NewTextView().
 		SetDynamicColors(true)
 	title.SetBorder(true)
+	title.SetTitle("Room")
+	title.SetTitleAlign(tview.AlignLeft)
 	title.SetText(tui.Room.RoomID)
 
 	copyButton := tview.NewButton("Copy room name")
@@ -110,18 +112,37 @@ func (tui *TUI) createQuitButton() *tview.Button {
 func (tui *TUI) createUsersTable() *tview.Flex {
 	usernames := ""
 	cardValues := ""
-	for _, user := range tui.Room.Users {
-		if user.UserType == Participant {
-			usernames += user.Username
+	if tui.Room.GamePhase == "PLAYING" {
+		for _, user := range tui.Room.Users {
+			if user.UserType == Participant {
+				usernames += user.Username
+				if user.YourUser {
+					usernames += " (*)"
+				}
+				usernames += "\n"
+				if user.CardValue == "" {
+					cardValues += "?\n"
+				} else {
+					cardValues += user.CardValue + "\n"
+				}
+			}
+		}
+	}
+	if tui.Room.GamePhase == "CARDS_REVEALED" {
+		var myUserID string
+		for _, user := range tui.Room.Users {
 			if user.YourUser {
+				myUserID = user.ID
+				break
+			}
+		}
+		for _, card := range tui.Room.GameResult.Cards {
+			usernames += card.PlayedBy.Username
+			if card.PlayedBy.ID == myUserID {
 				usernames += " (*)"
 			}
 			usernames += "\n"
-			if user.CardValue == "" {
-				cardValues += "?\n"
-			} else {
-				cardValues += user.CardValue + "\n"
-			}
+			cardValues += card.Value + "\n"
 		}
 	}
 	usersText := tview.NewTextView().
@@ -203,11 +224,13 @@ func (tui *TUI) createActionsArea() (*tview.Flex, []inputCapturer) {
 	revealButton := tview.NewButton("Reveal").SetSelectedFunc(func() {
 		tui.WsClient.SendMessage(RevealCards())
 	})
+	revealButton.SetDisabled(tui.Room.GamePhase == "CARDS_REVEALED")
 	inputs = append(inputs, revealButton)
 	rows.AddItem(revealButton, 3, 1, false)
 	newRoundButton := tview.NewButton("New Round").SetSelectedFunc(func() {
 		tui.WsClient.SendMessage(StartNewRound())
 	})
+	newRoundButton.SetDisabled(tui.Room.GamePhase == "PLAYING")
 	inputs = append(inputs, newRoundButton)
 	rows.AddItem(newRoundButton, 3, 1, false)
 	rows.AddItem(nil, 0, 10, false)

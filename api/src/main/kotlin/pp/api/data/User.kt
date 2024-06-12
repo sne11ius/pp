@@ -2,6 +2,7 @@ package pp.api.data
 
 import jakarta.websocket.Session
 import pp.api.data.UserType.SPECTATOR
+import pp.api.generateRandomId
 import pp.api.parseQuery
 import pp.api.threeMinutesFromNow
 import java.time.LocalTime
@@ -783,6 +784,11 @@ data class User(
     val session: Session,
     var connectionDeadline: LocalTime = threeMinutesFromNow(),
 ) {
+    /**
+     * This user's unique id
+     */
+    val id: String = generateRandomId()
+
     /**
      * Create a new [User] for the given [Session]
      *

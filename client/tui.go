@@ -205,11 +205,13 @@ func (tui *TUI) createActionsArea() (*tview.Flex, []inputCapturer) {
 	revealButton := tview.NewButton("Reveal").SetSelectedFunc(func() {
 		tui.WsClient.SendMessage(RevealCards())
 	})
+	revealButton.SetDisabled(tui.Room.GamePhase == "CARDS_REVEALED")
 	inputs = append(inputs, revealButton)
 	rows.AddItem(revealButton, 3, 1, false)
 	newRoundButton := tview.NewButton("New Round").SetSelectedFunc(func() {
 		tui.WsClient.SendMessage(StartNewRound())
 	})
+	newRoundButton.SetDisabled(tui.Room.GamePhase == "PLAYING")
 	inputs = append(inputs, newRoundButton)
 	rows.AddItem(newRoundButton, 3, 1, false)
 	rows.AddItem(nil, 0, 10, false)

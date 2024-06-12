@@ -99,8 +99,9 @@ type User struct {
 
 // Room is a planning poker room, including all participants and a state
 type Room struct {
-	RoomID  string   `json:"roomId"`
-	Deck    []string `json:"deck"`
-	Users   []*User  `json:"users"`
-	Average string   `json:"average"`
+	RoomID    string   `json:"roomId"`
+	Deck      []string `json:"deck"`
+	GamePhase string   `json:"gamePhase"`
+	Users     []*User  `json:"users"`
+	Average   string   `json:"average"`
 }

@@ -53,7 +53,11 @@ with the given id.` +
 		printHeader()
 		roomWebsocketURL := getWsURL()
 		ui := NewTUI()
-		client := New(roomWebsocketURL, ui.Room, ui.OnUpdate)
+		onError := func(err error) {
+			ui.App.Stop()
+			fmt.Printf("Error: %s\n", err)
+		}
+		client := New(roomWebsocketURL, ui.Room, ui.OnUpdate, onError)
 		ui.WsClient = client
 		// Having an actual ui and websocket client run doesn't work in tests since there is no one to stop the app
 		_, isTest := os.LookupEnv("SUB_CMD_FLAGS")

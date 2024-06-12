@@ -13,13 +13,14 @@ type PpWsClient struct {
 	wsURL      string
 	room       *Room
 	onUpdate   func()
+	onError    func(err error)
 	connection *websocket.Conn
 	channel    chan interface{}
 }
 
 // New creates a new PpWsClient with a given ws URL.
-func New(wsURL string, room *Room, onUpdate func()) *PpWsClient {
-	return &PpWsClient{wsURL, room, onUpdate, nil, nil}
+func New(wsURL string, room *Room, onUpdate func(), onError func(err error)) *PpWsClient {
+	return &PpWsClient{wsURL, room, onUpdate, onError, nil, nil}
 }
 
 // Start runs the pp client.
@@ -48,10 +49,11 @@ func (client *PpWsClient) Start() error {
 	}()
 	for {
 		err = c.ReadJSON(client.room)
-		client.onUpdate()
 		if err != nil { // ignore.coverage
-			log.Panic(err) // ignore.coverage
+			client.onError(err) // ignore.coverage
+			return err
 		}
+		client.onUpdate()
 	}
 }
 

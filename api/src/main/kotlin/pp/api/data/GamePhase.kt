@@ -11,12 +11,12 @@ import java.util.Locale.US
  *
  * @property username name of the user at the time the cards were revealed.
  * Note that the user might have changed its name afterwards.
- * @property userId id of the user that played the card.
+ * @property id id of the user that played the card.
  * Note that the user might have left the [Room] already.
  */
 data class CardPlayer(
     val username: String,
-    val userId: String,
+    val id: String,
 ) {
     constructor(user: User) : this(user.username, user.id)
 }
@@ -66,7 +66,7 @@ sealed class GamePhase {
     ) : GamePhase() {
         constructor(room: Room) : this(
             GameResult(
-                cards = room.users.filter { it.userType == UserType.PARTICIPANT }
+                cards = room.users.sortedBy { it.username }.filter { it.userType == UserType.PARTICIPANT }
                     .map {
                         Card(
                             playedBy = CardPlayer(it),

@@ -91,17 +91,38 @@ func StartNewRound() NoDetailsAction {
 
 // User is participant in a planning poker
 type User struct {
+	ID        string   `json:"id"`
 	Username  string   `json:"username"`
 	UserType  UserType `json:"userType"`
 	YourUser  bool     `json:"yourUser"`
 	CardValue string   `json:"cardValue"`
 }
 
+// CardPlayer is card player as part of a game result. This is not the same as a User since the user might have left the
+// game
+type CardPlayer struct {
+	Username string `json:"username"`
+	ID       string `json:"id"`
+}
+
+// PlayedCard describes a card that was revealed
+type PlayedCard struct {
+	PlayedBy *CardPlayer `json:"playedBy"`
+	Value    string      `json:"value"`
+}
+
+// GameResult represents the result of a single round.
+type GameResult struct {
+	Cards   []*PlayedCard `json:"cards"`
+	Average string        `json:"average"`
+}
+
 // Room is a planning poker room, including all participants and a state
 type Room struct {
-	RoomID    string   `json:"roomId"`
-	Deck      []string `json:"deck"`
-	GamePhase string   `json:"gamePhase"`
-	Users     []*User  `json:"users"`
-	Average   string   `json:"average"`
+	RoomID     string     `json:"roomId"`
+	Deck       []string   `json:"deck"`
+	GamePhase  string     `json:"gamePhase"`
+	GameResult GameResult `json:"gameResult"`
+	Users      []*User    `json:"users"`
+	Average    string     `json:"average"`
 }

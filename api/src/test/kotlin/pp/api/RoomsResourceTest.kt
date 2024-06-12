@@ -118,7 +118,7 @@ class RoomsResourceTest {
                         |"isYourUser":false,"cardValue":"19","id":"${user.id}"}],
                         |"average":"19",
                         |"log":[{"level":"INFO","message":"username revealed the cards"}],
-                        |"gameResult":{"cards":[{"playedBy":{"username":"username","userId":"${user.id}"},
+                        |"gameResult":{"cards":[{"playedBy":{"username":"username","id":"${user.id}"},
                         |"value":"19"}],
                         |"average":"19"}}]"""
                         .trimMargin()

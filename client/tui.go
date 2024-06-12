@@ -112,18 +112,37 @@ func (tui *TUI) createQuitButton() *tview.Button {
 func (tui *TUI) createUsersTable() *tview.Flex {
 	usernames := ""
 	cardValues := ""
-	for _, user := range tui.Room.Users {
-		if user.UserType == Participant {
-			usernames += user.Username
+	if tui.Room.GamePhase == "PLAYING" {
+		for _, user := range tui.Room.Users {
+			if user.UserType == Participant {
+				usernames += user.Username
+				if user.YourUser {
+					usernames += " (*)"
+				}
+				usernames += "\n"
+				if user.CardValue == "" {
+					cardValues += "?\n"
+				} else {
+					cardValues += user.CardValue + "\n"
+				}
+			}
+		}
+	}
+	if tui.Room.GamePhase == "CARDS_REVEALED" {
+		var myUserID string
+		for _, user := range tui.Room.Users {
 			if user.YourUser {
+				myUserID = user.ID
+				break
+			}
+		}
+		for _, card := range tui.Room.GameResult.Cards {
+			usernames += card.PlayedBy.Username
+			if card.PlayedBy.ID == myUserID {
 				usernames += " (*)"
 			}
 			usernames += "\n"
-			if user.CardValue == "" {
-				cardValues += "?\n"
-			} else {
-				cardValues += user.CardValue + "\n"
-			}
+			cardValues += card.Value + "\n"
 		}
 	}
 	usersText := tview.NewTextView().

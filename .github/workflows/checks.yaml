@@ -79,19 +79,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
       - name: Run tests with Gradle
         run: cd api && ./gradlew test
-  lint-client:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: '1.22'
-          cache: false
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v4
-        with:
-          version: latest
-          working-directory: client
   api-code-coverage:
     runs-on: ubuntu-latest
     steps:
@@ -110,44 +97,3 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: sne11ius/pp
           flags: api
-  client-code-coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: '1.22'
-          cache: false
-      - name: Run coverage
-        run: cd client && go test -race -coverprofile=coverage.out -covermode=atomic
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          slug: sne11ius/pp
-          flags: client
-  integration-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: '1.22'
-          cache: false
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-      - shell: bash
-        run: |
-          cd integration-test && ./integration-test.sh
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          slug: sne11ius/pp
-          flags: client

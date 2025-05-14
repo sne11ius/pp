@@ -2,9 +2,3 @@
 .quarkus
 api/.gradle
 api/build
-**/node_modules/*
-integration-test/.tui-test
-integration-test/tui-traces
-integration-test/covdatafiles
-integration-test/coverage.out
-integration-test/integrationtest.out

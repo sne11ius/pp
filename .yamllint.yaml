@@ -11,4 +11,3 @@ rules:
     check-keys: false
 ignore: |
   api/build
-  integration-test/node_modules/**

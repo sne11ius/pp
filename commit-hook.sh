@@ -43,13 +43,6 @@ SPOTLESS_RESULT=$?
 ./gradlew detekt
 DETEKT_RESULT=$?
 
-# Check client code with golangi
-cd ../client || exit 1
-echo Checking client code in "${PWD}"
-docker run  --rm -v "${PWD}:/workspace" -w "/workspace/." \
-  golangci/golangci-lint golangci-lint run
-GOLANGCI_RESULT=$?
-
 cd ..
 
 # unstash the stashed changes
@@ -72,9 +65,6 @@ elif [ $SPOTLESS_RESULT -ne 0 ]; then
 elif [ $DETEKT_RESULT -ne 0 ]; then
     printf "%bCheck Failed for detekt\n" "${RED}"
     exit $DETEKT_RESULT;
-elif [ $GOLANGCI_RESULT -ne 0 ]; then
-    printf "%bCheck Failed for golangci\n" "${RED}"
-    exit $GOLANGCI_RESULT;
 elif [ $YAML_RESULT -ne 0 ]; then
     printf "%bCheck Failed for yml\n" "${RED}"
     exit $YAML_RESULT;

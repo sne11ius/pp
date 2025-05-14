@@ -14,19 +14,6 @@ const releaseConfig = {
       {
         "replacements": [
           {
-            "files": ["client/root.go"],
-            "from": "var version = \".*\"",
-            "to": "var version = \"${nextRelease.version}\"",
-            "results": [
-              {
-                "file": "client/root.go",
-                "hasChanged": true,
-                "numMatches": 1,
-                "numReplacements": 1
-              }
-            ],
-            "countMatches": true
-          }, {
             "files": ["api/build.gradle.kts"],
             "from": "version = \".*\"",
             "to": "version = \"${nextRelease.version}\"",
@@ -45,7 +32,6 @@ const releaseConfig = {
     ],
     ['@semantic-release/git', {
       'assets': [
-        'client/root.go',
         'api/build.gradle.kts',
         'CHANGELOG.md'
       ],
@@ -58,7 +44,6 @@ const releaseConfig = {
       "@semantic-release/github",
       {
         "assets": [
-          { "path": "client/pp", "label": "pp client for linux" },
           { "path": "CHANGELOG.md", "label": "Changelog" },
           { "path": "LICENSE", "label": "License" },
         ]

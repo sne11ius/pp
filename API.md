@@ -1,6 +1,6 @@
-# Server API
+# API
 
-pp-API uses JSON messages exchanged with websockets
+pp uses JSON messages exchanged with websockets
 
 ## Path
 

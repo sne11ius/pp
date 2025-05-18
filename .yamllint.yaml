@@ -10,4 +10,4 @@ rules:
   truthy:
     check-keys: false
 ignore: |
-  api/build
+  build

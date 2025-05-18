@@ -55,7 +55,7 @@ jobs:
           dockerfile: Dockerfile*
           recursive: true
           failure-threshold: style
-  lint-api:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -66,8 +66,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
       - name: Run spotlessCheck and detekt with Gradle
-        run: cd api && ./gradlew spotlessCheck detekt
-  test-api:
+        run: ./gradlew spotlessCheck detekt
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -78,8 +78,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
       - name: Run tests with Gradle
-        run: cd api && ./gradlew test
-  api-code-coverage:
+        run: ./gradlew test
+  code-coverage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -90,10 +90,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
       - name: Run tests with Gradle
-        run: cd api && ./gradlew test
+        run: ./gradlew test
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: sne11ius/pp
-          flags: api

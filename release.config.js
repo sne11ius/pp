@@ -14,12 +14,12 @@ const releaseConfig = {
       {
         "replacements": [
           {
-            "files": ["api/build.gradle.kts"],
+            "files": ["build.gradle.kts"],
             "from": "version = \".*\"",
             "to": "version = \"${nextRelease.version}\"",
             "results": [
               {
-                "file": "api/build.gradle.kts",
+                "file": "build.gradle.kts",
                 "hasChanged": true,
                 "numMatches": 1,
                 "numReplacements": 1
@@ -32,7 +32,7 @@ const releaseConfig = {
     ],
     ['@semantic-release/git', {
       'assets': [
-        'api/build.gradle.kts',
+        'build.gradle.kts',
         'CHANGELOG.md'
       ],
       'message': 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}'

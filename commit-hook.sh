@@ -35,8 +35,8 @@ HADOLINT_RESULT=$?
 
 # Check backend code
 # run spotlessCheck via gradle
-echo Checking api code in "${PWD}"
-cd api && ./gradlew spotlessCheck --daemon
+echo Checking code in "${PWD}"
+./gradlew spotlessCheck --daemon
 SPOTLESS_RESULT=$?
 
 # Now run detekt

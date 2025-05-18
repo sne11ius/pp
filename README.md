@@ -1,4 +1,4 @@
-# pp - Planning Poker in Your Terminal
+# pp - Planning Poker Server
 
 🎉 Welcome to **pp**! 🎉
 
@@ -6,118 +6,73 @@
 
 ## What is pp?
 
-**pp** (Planning Poker) is a TUI (Text User Interface) application designed to
-make your estimation sessions efficient. No more distractions from flashy UIs –
-focus on what really matters: your team's estimates!
+**pp** (Planning Poker) is server application that provides a (mostly
+websockets) API to play planning poker. If you don't know what planning poker
+is, you might want to read up
+[wikipedia](https://en.wikipedia.org/wiki/Planning_poker).
 
-Wowee! Your business overlords surely won't be able to run a TUI program, but
-still want to view the game in real time very much. That's why we created a read
-only webpage to watch the game:
-[https://pp.discordia.network](https://pp.discordia.network)
+## Clients
 
-## Features
+If you want to play planning poker using this server, you will need a client.
+There are two awesome alternatives right now:
 
-- **Terminal-Based:** Runs directly in your terminal, keeping things simple and
-  distraction-free.
-- **Intuitive TUI:** User-friendly text interface that everyone can use.
-- **Collaborative:** Perfect for remote teams or those who love working in the
-  terminal.
-- **Lightweight:** Zero dependencies native binary.
+- [ja-ko/ppoker](https://github.com/ja-ko/ppoker) is an opinionated TUI
+  (terminal user interface) application, relying heavily on keyboard shortcuts.
+  You should totally check it out.
+- [pp-client.el](https://github.com/hennes-maertins/pp-client.el) allows you to
+  play planning poker inside the best of all operating system: emacs. You should
+  totally check it out.
 
-## Demo
+## Running pp
 
-*asciinema seems not to handle unicode well, so please blame the slightly broken
-layout on them ;)
-
-[![asciicast](https://asciinema.org/a/661370.svg)](https://asciinema.org/a/661370)
-
-## Installation
-
-pp is a single native executable and currently available for x86_64 based linux.
-
-### Download via browser
-
-Head over to [Releases](https://github.com/sne11ius/pp/releases) and download
-the latest *pp client for linux* binary file. Don't forget to set the executable
-flag on the downloaded file.
-
-### Download via shell
-
-The following lines should have you running the latest version in no time
+pp is distributed as docker image. A simple
 
 ```shell
-curl -s https://api.github.com/repos/sne11ius/pp/releases/latest | \
-  jq -r '.assets[] | select(.name == "pp") | .browser_download_url' | \
-  xargs curl -L -o pp && \
-chmod +x ./pp
+    docker run ghcr.io/sne11ius/pp-api:latest
 ```
 
-### From source
+should get you going after downloading the 40MB image. You can look up specific
+versions of pp in the [github container registry](https://github.com/sne11ius/pp/pkgs/container/pp-api).
 
-If you have [go](https://go.dev/) installed, you can also install directly from
-source:
+## Configuration
+
+pp cannot be configured and has no runtime dependencies (eg. no database). pp
+runs on port `8080`.
+
+## Development
+
+pp is written in [kotlin](https://kotlinlang.org/) and
+[quarkus](https://quarkus.io/).
+
+We use [gradle](https://gradle.org/), [graalvm](https://www.graalvm.org/) and
+[upx](https://upx.github.io/) to produce a docker image that only clocks in at
+around 40MB.
+
+### Running in development mode
+
+You can run the application in dev mode that enables live reload using:
+
+```shell script
+./gradlew quarkusDev
+```
+
+> **NOTE:**  Quarkus ships with a Dev UI, which is available in dev mode only
+> at [localhost](http://localhost:8080/q/dev/).
+
+### Release
+
+To build a releasable docker image, run the following command. This may take
+quite some time, but the resulting image should be small (about 40MB).
+
+*Important*: This command must be run in the root of this repo, since the build
+needs the `.git` directory to extract the git hash of the current commit.
 
 ```shell
-go install github.com/sne11ius/pp/client@latest
+docker build -f src/main/docker/Dockerfile.distroless -t pp/api .
 ```
 
-## Usage
-
-Fire up your terminal and start a planning poker session:
-
-Running `pp` will pick up your `$USER`, connect to the default server and join
-a random room.
-
-If you want to have more control, you can use cli parameters, env variables or a
-configuration file.
-
-### Configuration file
-
-You can configure pp by creating a configuration file `pp.config.yaml` in
-
-- `$PWD` or
-- `$HOME` or
-- `$Home/.config`
-
-This example shows all available entries:
-
-```yaml
-# file pp.config.yaml
-
-# set a user name
-name: "💖🦋 my-user 🦋💖"
-# set a room name
-room: "☠️ my danger room 🚨⚠️"
-# set a custom server, in case you want to host your own server
-server: https://pp.my.gtld
-```
-
-### Env / Params
-
-You can also configure settings with env vars or cli parameters.
-
-#### Room
-
-Use env var `ROOM` or parameter `-r` (or `--room`) to join any room:
-`ROOM=my_room ./pp` or `./pp -r my_room` or `./pp --room "☠ my danger room 🚨⚠"`
-
-
-#### Username
-
-Use env var `NAME` or parameter `-n` (or `--name`) to set any username:
-`NAME=my_user ./pp` or `./pp -n my_user` or `./pp --name "🤭 😈 😌 🤪 😊 "`
-
-If no username is set, it defaults to `$USER`.
-
-#### Server
-
-Use env var `SERVER` or parameter `-s` (or `--server`) to connect a different
-server (default is `https://pp.discordia.network`):
-`SERVER=http://localhost:8080 ./pp`
 
 ## Contributing
-
-***Make this a "how to dev" section or link to dedicated doc
 
 We ❤️ contributions! Here's how you can help:
 

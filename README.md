@@ -23,6 +23,11 @@ There are two awesome alternatives right now:
   play planning poker inside the best of all operating system: emacs. You should
   totally check it out.
 
+Historically, there was a an "official" client, written in
+[golang](https://go.dev/). It was discontinued due the other alternatives being
+superior. You can still check out the source from the last commit before removal
+at this [hash](https://github.com/sne11ius/pp/commit/f77bbb677e1b2a35d426337769ff18ba9440d49e).
+
 ## Running pp
 
 pp is distributed as docker image. A simple

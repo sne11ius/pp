@@ -1,4 +1,7 @@
 .idea
 .quarkus
-api/.gradle
-api/build
+.gradle
+build
+.vscode
+.env
+/.quarkus/cli/plugins/

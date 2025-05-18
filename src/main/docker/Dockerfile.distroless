@@ -5,16 +5,16 @@ USER root
 RUN curl --location --output upx-4.2.3-amd64_linux.tar.xz "https://github.com/upx/upx/releases/download/v4.2.3/upx-4.2.3-amd64_linux.tar.xz" && \
     tar -xJf upx-4.2.3-amd64_linux.tar.xz && \
     cp upx-4.2.3-amd64_linux/upx /bin/
-COPY --chown=quarkus:quarkus api/gradlew /code/gradlew
-COPY --chown=quarkus:quarkus api/gradle /code/gradle
-COPY --chown=quarkus:quarkus api/build.gradle.kts /code/
-COPY --chown=quarkus:quarkus api/settings.gradle.kts /code/
-COPY --chown=quarkus:quarkus api/gradle.properties /code/
+COPY --chown=quarkus:quarkus gradlew /code/gradlew
+COPY --chown=quarkus:quarkus gradle /code/gradle
+COPY --chown=quarkus:quarkus build.gradle.kts /code/
+COPY --chown=quarkus:quarkus settings.gradle.kts /code/
+COPY --chown=quarkus:quarkus gradle.properties /code/
 # Required to access the hash of the current commit during build
 COPY --chown=quarkus:quarkus .git /code/
 USER quarkus
 WORKDIR /code
-COPY api/src /code/src
+COPY src /code/src
 RUN \
     ./gradlew build -Dquarkus.native.enabled=true -Dquarkus.package.jar.enabled=false && \
     # Quarkus settings like "quarkus.native.compression.additional-args" seemed to have no effect - maybe we applied them

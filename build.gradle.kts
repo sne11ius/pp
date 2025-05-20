@@ -1,5 +1,6 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
 import org.gradle.api.JavaVersion.VERSION_21
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -73,8 +74,8 @@ allOpen {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = VERSION_21.toString()
-    kotlinOptions.javaParameters = true
+    compilerOptions.jvmTarget.set(JVM_21)
+    compilerOptions.javaParameters.set(true)
 }
 
 configure<SpotlessExtension> {

@@ -1,3 +1,15 @@
+# [1.0.0](https://github.com/sne11ius/pp/compare/v0.3.0...v1.0.0) (2025-05-20)
+
+
+### Features
+
+* removes client ([b113b44](https://github.com/sne11ius/pp/commit/b113b44b83d4f7cfc4f66753e5578c8aef5a7631))
+
+
+### BREAKING CHANGES
+
+* client will no longer be available
+
 # [0.3.0](https://github.com/sne11ius/pp/compare/v0.2.8...v0.3.0) (2024-05-31)
 
 

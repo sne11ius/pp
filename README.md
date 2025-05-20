@@ -46,12 +46,34 @@ runs on port `8080`.
 
 ## Development
 
-pp is written in [kotlin](https://kotlinlang.org/) and
+pp is written using [kotlin](https://kotlinlang.org/) and
 [quarkus](https://quarkus.io/).
 
 We use [gradle](https://gradle.org/), [graalvm](https://www.graalvm.org/) and
 [upx](https://upx.github.io/) to produce a docker image that only clocks in at
 around 40MB.
+
+
+### Prerequisites
+
+commits/pushes are checked by github actions to verify every change conforms to
+our development guidelines. To make sure your changes can be merged and land in
+the next release, consider running the checks on each commit.
+
+An example commit hook can be found in [commit-hook.sh](commit-hook.sh). The script
+uses [docker](https://www.docker.com/) and [gradle](https://gradle.org/). But
+since these tools are also required to build the software itself, this should be
+fine.
+
+Use the following script to install a git hook that checks your changes on each
+commit.
+
+  ```bash
+  rm -f .git/hooks/commit-msg
+  cp ./commit-hook.sh .git/hooks/commit-msg
+  chmod +x .git/hooks/commit-msg
+  ```
+
 
 ### Running in development mode
 
@@ -79,7 +101,7 @@ docker build -f src/main/docker/Dockerfile.distroless -t pp/api .
 
 ## Contributing
 
-We ❤️ contributions! Here's how you can help:
+We ❤️️ contributions! Here's how you can help:
 
 - Fork the repository
 - Create a new branch (`git checkout -b feature-foo`)

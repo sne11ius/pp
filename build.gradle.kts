@@ -28,7 +28,7 @@ dependencies {
     implementation("io.quarkus:quarkus-resteasy-reactive")
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
     implementation("io.quarkus:quarkus-resteasy-reactive-qute")
-    implementation("io.quarkiverse.qute.web:quarkus-qute-web:3.3.0")
+    implementation("io.quarkiverse.qute.web:quarkus-qute-web:3.4.0")
     implementation(libs.jackson.kotlin)
     implementation("io.quarkus:quarkus-websockets")
     implementation("io.quarkus:quarkus-scheduler")

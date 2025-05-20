@@ -1,4 +1,3 @@
-
 import com.diffplug.gradle.spotless.SpotlessExtension
 import org.gradle.api.JavaVersion.VERSION_21
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
@@ -27,10 +26,9 @@ dependencies {
     implementation("io.quarkus:quarkus-info")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-resteasy-reactive")
-    implementation("io.quarkus:quarkus-rest-qute")
-    implementation("io.quarkiverse.qute.web:quarkus-qute-web")
-    implementation("io.quarkus:quarkus-rest")
-    implementation("io.quarkus:quarkus-rest-jackson")
+    implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
+    implementation("io.quarkus:quarkus-resteasy-reactive-qute")
+    implementation("io.quarkiverse.qute.web:quarkus-qute-web:3.3.0")
     implementation(libs.jackson.kotlin)
     implementation("io.quarkus:quarkus-websockets")
     implementation("io.quarkus:quarkus-scheduler")

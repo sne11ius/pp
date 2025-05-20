@@ -1,3 +1,4 @@
+
 import com.diffplug.gradle.spotless.SpotlessExtension
 import org.gradle.api.JavaVersion.VERSION_21
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
@@ -38,6 +39,7 @@ dependencies {
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.quarkus:quarkus-junit5-mockito")
     testImplementation(libs.hamcrest.json)
+    testImplementation("io.quarkus:quarkus-jacoco")
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockito.inline)
     testImplementation("io.rest-assured:rest-assured")
@@ -56,14 +58,19 @@ java {
 tasks.test {
     systemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager")
     finalizedBy(tasks.jacocoTestReport)
+    configure<JacocoTaskExtension> {
+        excludeClassLoaders = listOf("*QuarkusClassLoader")
+        setDestinationFile(layout.buildDirectory.file("jacoco-quarkus.exec").get().asFile)
+        reports {
+            junitXml.required.set(true)
+            html.required.set(true)
+        }
+    }
 }
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
-    reports {
-        xml.required = true
-        html.required = false
-    }
+    enabled = false
 }
 
 allOpen {

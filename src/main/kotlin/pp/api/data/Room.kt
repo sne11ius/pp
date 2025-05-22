@@ -19,10 +19,12 @@ import pp.api.data.UserType.PARTICIPANT
  * @property deck list of the card values available in this room
  * @property gamePhase [GamePhase] this room is currently in
  * @property log list of [LogEntry]s for this room
+ * @property version
  */
 @Suppress("TooManyFunctions", "What can we do about this?")
 class Room(
     val roomId: String,
+    val version: ULong = 1u,
     val users: List<User> = listOf(),
     val deck: List<String> = listOf("1", "2", "3", "5", "8", "13", "☕"),
     val gamePhase: GamePhase = PLAYING,
@@ -43,15 +45,22 @@ class Room(
      * @param deck the new deck, defaults to [Room.deck]
      * @param gamePhase the new game phase, defaults to [Room.gamePhase]
      * @param log the new log, defaults to [Room.log]
+     * @param version version of the new room, defaults to `this.version + 1`
      * @return a modified copy of this room
      */
+    @Suppress(
+        "TOO_MANY_PARAMETERS",
+        "LongParameterList",
+        "What can we do about this?"
+    )
     fun copy(
         roomId: String = this.roomId,
         users: List<User> = this.users,
+        version: ULong = this.version + 1u,
         deck: List<String> = this.deck,
         gamePhase: GamePhase = this.gamePhase,
         log: List<LogEntry> = this.log,
-    ): Room = Room(roomId, users, deck, gamePhase, log)
+    ): Room = Room(roomId, version, users, deck, gamePhase, log)
 
     /**
      * A room is empty if it contains no users

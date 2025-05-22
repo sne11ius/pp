@@ -22,8 +22,8 @@ class RoomTest {
     @Test
     fun equalsAndHashCode() {
         val session = mock(Session::class.java)
-        val room1 = Room("nice-id", listOf(User("a name", SPECTATOR, "?", session)))
-        val likeRoom1 = Room("nice-id", listOf(User("another name", SPECTATOR, "?", session)))
+        val room1 = Room(roomId = "nice-id", users = listOf(User("a name", SPECTATOR, "?", session)))
+        val likeRoom1 = Room(roomId = "nice-id", users = listOf(User("another name", SPECTATOR, "?", session)))
         val unlikeRoom1 = Room("another-nice-id")
 
         assertEquals(room1, likeRoom1) { "Rooms with equal ids should be equal" }
@@ -32,8 +32,7 @@ class RoomTest {
         assertEquals(room1.hashCode(), likeRoom1.hashCode()) { "Rooms with equal ids should have equal hashcode" }
         assertNotEquals(room1, unlikeRoom1) { "Rooms with different ids should be not equal" }
         assertNotEquals(
-            room1.hashCode(),
-            unlikeRoom1.hashCode()
+            room1.hashCode(), unlikeRoom1.hashCode()
         ) { "Rooms with different ids should be have equal hashcode" }
     }
 
@@ -46,11 +45,7 @@ class RoomTest {
         val deck = listOf("nice card")
         val log = listOf(LogEntry(LogLevel.INFO, "nice msg"))
         val copy = room.copy(
-            roomId = "new-id",
-            users = listOf(user),
-            deck = deck,
-            gamePhase = CARDS_REVEALED,
-            log = log
+            roomId = "new-id", users = listOf(user), deck = deck, gamePhase = CARDS_REVEALED, log = log
         )
         assertNotEquals(room, copy)
         assertEquals(copy.roomId, "new-id")
@@ -63,8 +58,8 @@ class RoomTest {
     @Test
     fun isEmpty() {
         val user = mock(User::class.java)
-        assertTrue(Room("nice-id", listOf()).isEmpty()) { "Room without users should be empty" }
-        assertFalse(Room("nice-id", listOf(user)).isEmpty()) { "Room with users should not be empty" }
+        assertTrue(Room(roomId = "nice-id", users = listOf()).isEmpty()) { "Room without users should be empty" }
+        assertFalse(Room(roomId = "nice-id", users = listOf(user)).isEmpty()) { "Room with users should not be empty" }
     }
 
     @Test
@@ -77,7 +72,7 @@ class RoomTest {
         whenever(session1.id).thenReturn("another-id")
         val user1 = User("user1", SPECTATOR, "?", session1)
 
-        val room = Room("nice-id", listOf(user, user1, user))
+        val room = Room(roomId = "nice-id", users = listOf(user, user1, user))
         assertSame(user1, room.findUserWithSession(session1)) { "Users should be found by session id" }
 
         val unknownSession = mock(Session::class.java)
@@ -90,7 +85,7 @@ class RoomTest {
         val session = mock(Session::class.java)
         whenever(session.id).thenReturn("nice-id")
         val user = User("user", SPECTATOR, "?", session)
-        val room = Room("nice-id", listOf(user))
+        val room = Room(roomId = "nice-id", users = listOf(user))
         assertTrue(room.hasUserWithSession(session)) { "Should find user with session id" }
 
         val unknownSession = mock(Session::class.java)
@@ -119,5 +114,15 @@ class RoomTest {
         val unknownSession = mock(Session::class.java)
         whenever(unknownSession.id).thenReturn("another-id")
         assertFalse(room.minus(unknownSession).isEmpty())
+    }
+
+    @Test
+    fun versionAscends() {
+        val room = Room(roomId = "nice-id", version = 9u)
+        val updated = room.copy()
+        assertEquals(10U.toInt(), updated.version.toInt())
+        val room2 = Room(roomId = "nice-id")
+        val updated2 = room2.copy()
+        assertEquals(2u.toInt(), updated2.version.toInt())
     }
 }

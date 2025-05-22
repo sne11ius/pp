@@ -77,7 +77,7 @@ class RoomsResourceTest {
             .contentType(JSON)
             .body(
                 equalTo(
-                    """[{"roomId":"roomId","deck":["1","2","3","5","8","13","☕"],
+                    """[{"roomId":"roomId","version":1,"deck":["1","2","3","5","8","13","☕"],
                 |"gamePhase":"PLAYING","users":[{"username":"username","userType":"PARTICIPANT",
                 |"isYourUser":false,"cardValue":"✅"}],"average":"?","log":[]}]""".trimMargin().replace("\n", "")
                 )

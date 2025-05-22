@@ -20,11 +20,13 @@ import java.util.Locale.US
  * @property average represents the average of the card values played. Will only show real data if [gamePhase] is
  *   [CARDS_REVEALED]
  * @property log list of [LogEntry]s for this rooms
+ * @property version
  */
 // see https://quarkus.io/guides/writing-native-applications-tips#registerForReflection
 @RegisterForReflection(registerFullHierarchy = true)
 data class RoomDto(
     val roomId: String,
+    val version: ULong,
     val deck: List<String>,
     val gamePhase: GamePhase,
     val users: List<UserDto>,
@@ -33,6 +35,7 @@ data class RoomDto(
 ) {
     constructor(room: Room, yourUser: User? = null) : this(
         roomId = room.roomId,
+        version = room.version,
         deck = room.deck,
         gamePhase = room.gamePhase,
         users = room.users.map { user ->

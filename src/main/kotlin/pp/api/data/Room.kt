@@ -55,8 +55,17 @@ class Room(
 
     /**
      * A room is empty if it contains no users
+     *
+     * @return `true` if the room is empty
      */
     fun isEmpty(): Boolean = users.isEmpty()
+
+    /**
+     * A room is not empty if it contains any users
+     *
+     * @return `true` if the room is not empty
+     */
+    fun isNotEmpty(): Boolean = !isEmpty()
 
     /**
      * Find the [User] with the given [Session]

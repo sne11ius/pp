@@ -1,0 +1,11 @@
+- name: TRAILING_COMMA
+  enabled: true
+  configuration:
+    valueArgument: true
+    valueParameter: true
+    indices: true
+    whenConditions: true
+    collectionLiteral: true
+    typeArgument: true
+    typeParameter: true
+    destructuringDeclaration: true

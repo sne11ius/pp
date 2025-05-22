@@ -89,6 +89,6 @@ configure<SpotlessExtension> {
     }
     kotlinGradle {
         target("*.gradle.kts")
-        diktat("2.0.0")
+        diktat("2.0.0").configFile("./diktat-analysis.yaml")
     }
 }

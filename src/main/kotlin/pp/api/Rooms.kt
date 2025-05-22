@@ -22,17 +22,25 @@ import java.io.IOException
 import java.nio.ByteBuffer
 import java.time.LocalTime.now
 import java.util.Collections.unmodifiableSet
-import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 /**
  * Container class for all poker rooms.
  *
- * Ensures all existing rooms have a good state - eg. no rooms without any users
+ * Ensures all existing rooms have a good state - e.g. no rooms without any users
  */
 @Suppress("TooManyFunctions", "What can we do about this?")
 @ApplicationScoped
 class Rooms {
-    private val allRooms: MutableSet<Room> = ConcurrentHashMap.newKeySet()
+    // Since we will keep all access secured by the lock, there's no need to
+    // use anything more sophisticated.
+    private val allRooms: MutableSet<Room> = mutableSetOf()
+
+    // We simply lock all access to the `allRooms` behind this lock. Might
+    // not be super performant, but should be quite safe.
+    private val lock = ReentrantReadWriteLock()
 
     /**
      * Make sure the room with the given id contains the user. Room will be created if necessary.
@@ -42,15 +50,18 @@ class Rooms {
      * @throws IllegalPokerMoveException if the user already joined a different room
      */
     fun ensureRoomContainsUser(roomId: String, user: User) {
-        val existingRoom: Room? = get(user.session)?.first
-        if (existingRoom != null && existingRoom.roomId != roomId) {
-            throw IllegalPokerMoveException("User $user is already in use")
+        lock.write {
+            val existingRoom: Room? = get(user.session)?.first
+            if (existingRoom != null && existingRoom.roomId != roomId) {
+                throw IllegalPokerMoveException("User $user is already in use")
+            }
+            val room =
+                allRooms.firstOrNull { it.roomId == roomId } ?: Room(roomId).also { Log.info("Creating room $roomId") }
+            val updated = room withUser user withInfo "User ${user.username} joined"
+            allRooms -= room
+            allRooms += updated
+            updated.broadcastState()
         }
-        val room = get(roomId) ?: kotlin.run {
-            Log.info("Creating room $roomId")
-            Room(roomId)
-        }
-        update(room withUser user withInfo "User ${user.username} joined")
     }
 
     /**
@@ -59,32 +70,39 @@ class Rooms {
      * @param session the [Session] to remove
      */
     fun remove(session: Session) {
-        get(session)?.let { (room, user) ->
+        withUser(session) { room, user ->
             try {
-                // Since we don't know the reason the user was removed, [VIOLATED_POLICY] seems to be the most generic
-                // result and we cannot give any reasonPhrase
+                // Since we don't know the reason the user was removed, [VIOLATED_POLICY] seems to be the most
+                // generic result, and we cannot give any reasonPhrase
                 user.session.close(CloseReason(VIOLATED_POLICY, null))
-            } catch (ignored: Exception) {
+            } catch (_: Exception) {
                 // Since we don't know the reason the user was removed, it might as well be because of a broken
                 // connection - so we cannot care for any errors here.
             }
             Log.info("User ${user.username} left room ${room.roomId}")
-            update(room - session withInfo "User ${user.username} left")
+            room - session withInfo "User ${user.username} left"
         }
     }
 
     /**
      * Get a read only representation of all rooms
+     *
+     * @return a read only representation of all current rooms
      */
-    fun getRooms(): Set<Room> = unmodifiableSet(allRooms)
+    fun getRooms(): Set<Room> = lock.read { unmodifiableSet(HashSet(allRooms)) }
 
     /**
      * Sends the current room state to all connected clients
      */
-    fun Room.broadcastState() {
+    private fun Room.broadcastState() {
         users.forEach { user ->
             val state = RoomDto(this, user)
-            user.sendObject(state)
+            Log.debug("State: $state")
+            user.sendObjectAsync(state) { result ->
+                if (!result.isOK) {
+                    Log.debug("Could not send room update to ${user.username}", result.exception)
+                }
+            }
         }
     }
 
@@ -103,7 +121,7 @@ class Rooms {
             is RevealCards -> changeGamePhase(session, CARDS_REVEALED)
             is StartNewRound -> changeGamePhase(session, PLAYING)
             else -> {
-                // spotlessApply keeps generating this else if it doesnt exist
+                // spotlessApply keeps generating this else if it doesn't exist
             }
         }
     }
@@ -116,9 +134,9 @@ class Rooms {
      */
     @Scheduled(every = "1m", delayed = "1m")
     fun sendPings() {
-        allRooms
-            .fold(emptyList()) { usersWithErrors: List<User>, room ->
-                usersWithErrors + room.users.mapNotNull { user ->
+        lock.write {
+            allRooms.flatMap { room ->
+                room.users.mapNotNull { user ->
                     try {
                         user.session.asyncRemote.sendPing(ByteBuffer.wrap("PING".toByteArray()))
                         null
@@ -126,10 +144,8 @@ class Rooms {
                         user
                     }
                 }
-            }
-            .forEach { user ->
-                remove(user.session)
-            }
+            }.forEach { remove(it.session) }
+        }
     }
 
     /**
@@ -141,104 +157,97 @@ class Rooms {
     @Scheduled(every = "3m", delayed = "3m")
     fun removeUnresponsiveUsers() {
         val now = now()
-        allRooms
-            .flatMap { it.users }
-            .filter { it.connectionDeadline < now }
-            .forEach { user ->
-                Log.info("Kick user ${user.username}: did not respond to ping")
-                remove(user.session)
-            }
+        lock.write {
+            allRooms.flatMap { it.users }
+                .filter { it.connectionDeadline < now }
+                .forEach {
+                    Log.info("Kick user ${it.username}: did not respond to ping")
+                    remove(it.session)
+                }
+        }
     }
 
     /**
      * @param session
      */
     fun resetUserConnectionDeadline(session: Session) {
-        get(session)?.let { (_, user) ->
-            user.connectionDeadline = threeMinutesFromNow()
-        }
-    }
-
-    private fun update(room: Room) {
-        allRooms -= room
-        if (room.isEmpty()) {
-            Log.info("Discarded empty room ${room.roomId}")
-        } else {
-            allRooms += room
-            room.broadcastState()
+        lock.write {
+            get(session)?.second?.connectionDeadline = threeMinutesFromNow()
         }
     }
 
     private fun changeName(session: Session, name: String) {
-        get(session)?.let { (room, user) ->
+        withUser(session) { room, user ->
             val updatedRoom = room withInfo "User ${user.username} changed name to $name"
             user.username = name
-            update(updatedRoom)
+            updatedRoom
         }
     }
 
     private fun playCard(session: Session, cardValue: String?) {
-        get(session)?.let { (room, user) ->
+        withUser(session) { room, user ->
             if (room.gamePhase == PLAYING) {
                 if (cardValue != null && cardValue !in room.deck) {
-                    update(room withInfo "${user.username} tried to play card with illegal value: $cardValue")
+                    room withInfo "${user.username} tried to play card with illegal value: $cardValue"
                 } else {
                     user.cardValue = cardValue
-                    update(room)
+                    room
                 }
             } else {
-                update(room withInfo "${user.username} tried to play card while no round was in progress")
+                room withInfo "${user.username} tried to play card while no round was in progress"
             }
         }
     }
 
     private fun chatMessage(session: Session, message: String) {
         if (message.isNotBlank()) {
-            get(session)?.let { (room, user) ->
-                update(room withChatMessage "[${user.username}]: $message")
+            withUser(session) { room, user ->
+                room withChatMessage "[${user.username}]: $message"
             }
         }
     }
 
     private fun changeGamePhase(session: Session, newGamePhase: GamePhase) {
-        get(session)?.let { (room, user) ->
+        withUser(session) { room, user ->
             val canRevealCards = room.gamePhase == PLAYING && newGamePhase == CARDS_REVEALED
             val canStartNextRound = room.gamePhase == CARDS_REVEALED && newGamePhase == PLAYING
 
             if (canRevealCards || canStartNextRound) {
-                val updatedRoom = room.run {
-                    copy(
-                        gamePhase = newGamePhase,
-                        users = if (newGamePhase == CARDS_REVEALED) {
-                            users
-                        } else {
-                            users.map { user ->
-                                user.copy(
-                                    cardValue = null
-                                )
-                            }
+                val updated = room.copy(
+                    gamePhase = newGamePhase,
+                    users = if (newGamePhase == CARDS_REVEALED) {
+                        room.users
+                    } else {
+                        room.users.map {
+                            it.copy(
+                                cardValue = null
+                            )
                         }
-                    )
-                }
+                    }
+                )
                 val message = if (newGamePhase == CARDS_REVEALED) "revealed the cards" else "started a new round"
-                update(updatedRoom withInfo "${user.username} $message")
+                updated withInfo "${user.username} $message"
             } else {
-                val error = "${user.username} tried to change game phase to $newGamePhase, but that's illegal"
-                update(room withInfo error)
+                room withInfo "${user.username} tried to change game phase to $newGamePhase, but that's illegal"
             }
         }
     }
 
-    private operator fun get(roomId: String): Room? = allRooms.firstOrNull { it.roomId == roomId }
-    private operator fun get(session: Session): Pair<Room, User>? = allRooms
-        .firstOrNull {
-            it.hasUserWithSession(
-                session
-            )
+    private fun get(session: Session): Pair<Room, User>? =
+        allRooms.firstOrNull { it.hasUserWithSession(session) }?.let { room ->
+            room.findUserWithSession(session)?.let { room to it }
         }
-        ?.let { room: Room ->
-            room.findUserWithSession(session)?.let { user ->
-                room to user
+
+    private fun withUser(session: Session, action: (Room, User) -> Room) {
+        lock.write {
+            val room = allRooms.firstOrNull { it.hasUserWithSession(session) } ?: return
+            val user = room.findUserWithSession(session) ?: return
+            val updated = action(room, user)
+            allRooms -= room
+            if (updated.isNotEmpty()) {
+                allRooms += updated
+                updated.broadcastState()
             }
         }
+    }
 }

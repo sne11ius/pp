@@ -1,11 +1,11 @@
 package pp.api.data
 
+import jakarta.websocket.SendResult
 import jakarta.websocket.Session
 import pp.api.data.UserType.SPECTATOR
 import pp.api.parseQuery
 import pp.api.threeMinutesFromNow
 import java.time.LocalTime
-import java.util.concurrent.Future
 
 /*
  * Portions of this file are derived from work licensed under the Apache License, Version 2.0
@@ -805,8 +805,11 @@ data class User(
      * Any object will be serialized as JSON (see. [pp.api.JsonEncoder] or its usage in [pp.api.RoomSocket].
      *
      * @param obj the object to send.
+     * @param resultAction a handler for the result of the send operation
      */
-    fun <T> sendObject(obj: T): Future<Void> = session.asyncRemote.sendObject(obj)
+    fun <T> sendObjectAsync(obj: T, resultAction: (SendResult) -> Unit) {
+        session.asyncRemote.sendObject(obj, resultAction)
+    }
 
     /**
      * Check whether this [User] has the given [Session]

@@ -2,9 +2,9 @@
 FROM quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21 AS build
 USER root
 # upx seems not to be installed in the base image
-RUN curl --location --output upx-4.2.3-amd64_linux.tar.xz "https://github.com/upx/upx/releases/download/v4.2.3/upx-4.2.3-amd64_linux.tar.xz" && \
-    tar -xJf upx-4.2.3-amd64_linux.tar.xz && \
-    cp upx-4.2.3-amd64_linux/upx /bin/
+RUN curl --location --output upx-5.0.1-amd64_linux.tar.xz "https://github.com/upx/upx/releases/download/v5.0.1/upx-5.0.1-amd64_linux.tar.xz" && \
+    tar -xJf upx-5.0.1-amd64_linux.tar.xz && \
+    cp upx-5.0.1-amd64_linux/upx /bin/
 COPY --chown=quarkus:quarkus gradlew /code/gradlew
 COPY --chown=quarkus:quarkus gradle /code/gradle
 COPY --chown=quarkus:quarkus build.gradle.kts /code/

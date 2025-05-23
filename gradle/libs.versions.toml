@@ -2,7 +2,7 @@
 kotlin = "2.1.21"
 spotless = "7.0.3"
 detekt = "1.23.8"
-quarkus = "3.15.1"
+quarkus = "3.23.0"
 hamcrest-json = "0.3"
 mockito = "5.18.0"
 mockito-kotlin = "5.4.0"

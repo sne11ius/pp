@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/sne11ius/pp/compare/v1.1.0...v1.1.1) (2025-05-23)
+
+
+### Bug Fixes
+
+* removes upx from github action ([eff39a5](https://github.com/sne11ius/pp/commit/eff39a5365cb617dcf1dd83ca466af455653b90b))
+
 # [1.1.0](https://github.com/sne11ius/pp/compare/v1.0.0...v1.1.0) (2025-05-23)
 
 

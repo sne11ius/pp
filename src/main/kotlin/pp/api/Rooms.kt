@@ -8,6 +8,7 @@ import jakarta.websocket.CloseReason.CloseCodes.VIOLATED_POLICY
 import jakarta.websocket.Session
 import pp.api.data.ChangeName
 import pp.api.data.ChatMessage
+import pp.api.data.ClientBroadcast
 import pp.api.data.GamePhase
 import pp.api.data.GamePhase.CARDS_REVEALED
 import pp.api.data.GamePhase.PLAYING
@@ -120,6 +121,7 @@ class Rooms {
             is ChatMessage -> chatMessage(session, request.message)
             is RevealCards -> changeGamePhase(session, CARDS_REVEALED)
             is StartNewRound -> changeGamePhase(session, PLAYING)
+            is ClientBroadcast -> doClientBroadcast(session, request.payload)
             else -> {
                 // spotlessApply keeps generating this else if it doesn't exist
             }
@@ -191,7 +193,7 @@ class Rooms {
                     room withInfo "${user.username} tried to play card with illegal value: $cardValue"
                 } else {
                     user.cardValue = cardValue
-                    room
+                    room.copy()
                 }
             } else {
                 room withInfo "${user.username} tried to play card while no round was in progress"
@@ -204,6 +206,12 @@ class Rooms {
             withUser(session) { room, user ->
                 room withChatMessage "[${user.username}]: $message"
             }
+        }
+    }
+
+    private fun doClientBroadcast(session: Session, payload: String) {
+        withUser(session) { room, user ->
+            room withBroadcast payload
         }
     }
 

@@ -118,7 +118,7 @@ class RoomTest {
 
     @Test
     fun versionAscends() {
-        val room = Room(roomId = "nice-id", version = 9u)
+        val room = Room(roomId = "nice-id", version = 9)
         val updated = room.copy()
         assertEquals(10U.toInt(), updated.version.toInt())
         val room2 = Room(roomId = "nice-id")

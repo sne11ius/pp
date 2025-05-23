@@ -22,5 +22,11 @@ enum class LogLevel {
      * Clients should consider simply reconnecting on every error
      */
     ERROR,
+
+    /**
+     * A broadcast message sent by a client
+     */
+    CLIENT_BROADCAST,
+
     ;
 }

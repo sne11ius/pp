@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/sne11ius/pp/compare/v1.1.1...v1.2.0) (2025-05-23)
+
+
+### Features
+
+* add ClientBroadcast message ([c9e7121](https://github.com/sne11ius/pp/commit/c9e712199858d915b7611e8761901427870f4267))
+
 ## [1.1.1](https://github.com/sne11ius/pp/compare/v1.1.0...v1.1.1) (2025-05-23)
 
 

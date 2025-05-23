@@ -3,7 +3,8 @@
 
 ### Bug Fixes
 
-* improves behavior regarding concurrency ([867575a](https://github.com/sne11ius/pp/commit/867575a4ebd78f05abbefcab4ec577d45ee1ef9c)), closes [#113](https://github.com/sne11ius/pp/issues/113)
+* improves behavior regarding concurrency ([867575a](https://github.com/sne11ius/pp/commit/867575a4ebd78f05abbefcab4ec577d45ee1ef9c)),
+  closes [#113](https://github.com/sne11ius/pp/issues/113)
 
 
 ### Features

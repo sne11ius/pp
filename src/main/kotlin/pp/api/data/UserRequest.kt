@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME
 import pp.api.data.RequestType.CHANGE_NAME
 import pp.api.data.RequestType.CHAT_MESSAGE
+import pp.api.data.RequestType.CLIENT_BROADCAST
 import pp.api.data.RequestType.PLAY_CARD
 import pp.api.data.RequestType.REVEAL_CARDS
 import pp.api.data.RequestType.START_NEW_ROUND
@@ -45,6 +46,11 @@ enum class RequestType {
      * User wants to start the next round
      */
     START_NEW_ROUND,
+
+    /**
+     * Client wants to broadcast a message
+     */
+    CLIENT_BROADCAST,
     ;
 }
 
@@ -116,4 +122,30 @@ class StartNewRound : UserRequest(START_NEW_ROUND) {
     override fun equals(other: Any?): Boolean = other is StartNewRound
 
     override fun hashCode(): Int = "StartNewRound".hashCode()
+}
+
+/**
+ * Message a user (or better: the users' client) sends if it wants to broadcast
+ * "something" to other clients.
+ *
+ * @property payload the broadcast payload
+ */
+class ClientBroadcast(
+    val payload: String,
+) : UserRequest(CLIENT_BROADCAST) {
+    init {
+        require(payload.isNotBlank()) {
+            "Payload cannot be blank"
+        }
+        require(payload.length <= MAX_PAYLOAD_LENGTH) {
+            "Payload cannot be longer than $MAX_PAYLOAD_LENGTH"
+        }
+    }
+
+    companion object {
+        /**
+         * Maximum length of a broadcast payload
+         */
+        const val MAX_PAYLOAD_LENGTH = 10_000
+    }
 }

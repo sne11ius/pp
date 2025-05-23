@@ -14,10 +14,12 @@ import org.mockito.Mockito.mock
 import org.mockito.kotlin.whenever
 import pp.api.data.ChangeName
 import pp.api.data.ChatMessage
+import pp.api.data.ClientBroadcast
 import pp.api.data.GamePhase.CARDS_REVEALED
 import pp.api.data.GamePhase.PLAYING
 import pp.api.data.LogEntry
 import pp.api.data.LogLevel.CHAT
+import pp.api.data.LogLevel.CLIENT_BROADCAST
 import pp.api.data.LogLevel.INFO
 import pp.api.data.PlayCard
 import pp.api.data.RevealCards
@@ -376,8 +378,9 @@ class RoomsTest {
             3, rooms.getRooms().first().log
                 .size
         )
-        assertTrue(rooms.getRooms().first().log
-            .any { it.level == INFO && "tried to change game phase" in it.message })
+        assertTrue(
+            rooms.getRooms().first().log
+                .any { it.level == INFO && "tried to change game phase" in it.message })
     }
 
     @Test
@@ -444,8 +447,27 @@ class RoomsTest {
             2, rooms.getRooms().first().log
                 .size
         )
-        assertTrue(rooms.getRooms().first().log
-            .any { it.level == INFO && "tried to change game phase" in it.message })
+        assertTrue(
+            rooms.getRooms().first().log
+                .any { it.level == INFO && "tried to change game phase" in it.message })
+    }
+
+    @Test
+    fun canBroadcastMessages() {
+        val rooms = Rooms()
+        val remote = mock(Async::class.java)
+        val session = mock(Session::class.java)
+        whenever(session.asyncRemote).thenReturn(remote)
+        whenever(remote.sendObject(any())).thenReturn(constantFuture(null))
+        val user = User("username", SPECTATOR, "7", session)
+        whenever(session.id).thenReturn("new-session-id")
+        rooms.ensureRoomContainsUser("nice-id", user)
+        rooms.submitUserRequest(ClientBroadcast("nice broadcast message"), session)
+        assertEquals(
+            LogEntry(level = CLIENT_BROADCAST, message = "nice broadcast message"),
+            rooms.getRooms().first().log
+                .last()
+        )
     }
 
     @Test

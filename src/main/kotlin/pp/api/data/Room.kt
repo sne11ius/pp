@@ -3,6 +3,7 @@ package pp.api.data
 import io.quarkus.logging.Log
 import jakarta.websocket.Session
 import pp.api.data.GamePhase.PLAYING
+import pp.api.data.LogLevel.CLIENT_BROADCAST
 import pp.api.data.UserType.PARTICIPANT
 
 /**
@@ -24,7 +25,7 @@ import pp.api.data.UserType.PARTICIPANT
 @Suppress("TooManyFunctions", "What can we do about this?")
 class Room(
     val roomId: String,
-    val version: ULong = 1u,
+    val version: Long = 1,
     val users: List<User> = listOf(),
     val deck: List<String> = listOf("1", "2", "3", "5", "8", "13", "☕"),
     val gamePhase: GamePhase = PLAYING,
@@ -56,7 +57,7 @@ class Room(
     fun copy(
         roomId: String = this.roomId,
         users: List<User> = this.users,
-        version: ULong = this.version + 1u,
+        version: Long = this.version + 1,
         deck: List<String> = this.deck,
         gamePhase: GamePhase = this.gamePhase,
         log: List<LogEntry> = this.log,
@@ -133,6 +134,14 @@ class Room(
      * @return a copy of this room, with the message added as [LogEntry] with [LogLevel] [LogLevel.CHAT]
      */
     infix fun withChatMessage(message: String): Room = withLogEntry(chat(message))
+
+    /**
+     * Crate a copy of this room, with the given message added as [LogEntry] with level [LogLevel.CLIENT_BROADCAST]
+     *
+     * @param payload the chat message to add
+     * @return a copy of this room, with the message added as [LogEntry] with [LogLevel] [LogLevel.CLIENT_BROADCAST]
+     */
+    infix fun withBroadcast(payload: String): Room = withLogEntry(LogEntry(CLIENT_BROADCAST, payload))
 
     private infix fun withLogEntry(entry: LogEntry): Room = copy(
         log = log + entry,

@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/sne11ius/pp/compare/v1.0.0...v1.1.0) (2025-05-23)
+
+
+### Bug Fixes
+
+* improves behavior regarding concurrency ([867575a](https://github.com/sne11ius/pp/commit/867575a4ebd78f05abbefcab4ec577d45ee1ef9c)), closes [#113](https://github.com/sne11ius/pp/issues/113)
+
+
+### Features
+
+* introduces `Room.version` ([8a834b4](https://github.com/sne11ius/pp/commit/8a834b47a384220d9ac1c58a501cef0276023442))
+
 # [1.0.0](https://github.com/sne11ius/pp/compare/v0.3.0...v1.0.0) (2025-05-20)
 
 

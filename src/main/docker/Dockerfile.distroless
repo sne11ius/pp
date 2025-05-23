@@ -10,6 +10,7 @@ COPY --chown=quarkus:quarkus gradle /code/gradle
 COPY --chown=quarkus:quarkus build.gradle.kts /code/
 COPY --chown=quarkus:quarkus settings.gradle.kts /code/
 COPY --chown=quarkus:quarkus gradle.properties /code/
+COPY --chown=quarkus:quarkus diktat-analysis.yaml /code/
 # Required to access the hash of the current commit during build
 COPY --chown=quarkus:quarkus .git /code/
 USER quarkus

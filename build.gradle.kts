@@ -24,7 +24,7 @@ dependencies {
     implementation("io.quarkus:quarkus-rest")
     implementation("io.quarkus:quarkus-rest-jackson")
     implementation("io.quarkus:quarkus-rest-qute")
-    implementation("io.quarkiverse.qute.web:quarkus-qute-web:3.4.0")
+    implementation(libs.qute.web)
     implementation(libs.jackson.kotlin)
     implementation("io.quarkus:quarkus-websockets")
     implementation("io.quarkus:quarkus-scheduler")

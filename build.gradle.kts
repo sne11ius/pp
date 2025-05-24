@@ -17,17 +17,17 @@ repositories {
     mavenLocal()
 }
 
-val quarkusPlatformGroupId: String by project
-val quarkusPlatformArtifactId: String by project
-val quarkusPlatformVersion: String by project
+val quarkusPlatformGroupId = project.findProperty("quarkusPlatformGroupId") as String
+val quarkusPlatformArtifactId = project.findProperty("quarkusPlatformArtifactId") as String
+val quarkusPlatformVersion = project.findProperty("quarkusPlatformVersion") as String
 
 dependencies {
     implementation(enforcedPlatform("$quarkusPlatformGroupId:$quarkusPlatformArtifactId:$quarkusPlatformVersion"))
     implementation("io.quarkus:quarkus-info")
     implementation("io.quarkus:quarkus-kotlin")
-    implementation("io.quarkus:quarkus-resteasy-reactive")
-    implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
-    implementation("io.quarkus:quarkus-resteasy-reactive-qute")
+    implementation("io.quarkus:quarkus-rest")
+    implementation("io.quarkus:quarkus-rest-jackson")
+    implementation("io.quarkus:quarkus-rest-qute")
     implementation("io.quarkiverse.qute.web:quarkus-qute-web:3.4.0")
     implementation(libs.jackson.kotlin)
     implementation("io.quarkus:quarkus-websockets")

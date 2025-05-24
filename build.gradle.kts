@@ -17,12 +17,8 @@ repositories {
     mavenLocal()
 }
 
-val quarkusPlatformGroupId = project.findProperty("quarkusPlatformGroupId") as String
-val quarkusPlatformArtifactId = project.findProperty("quarkusPlatformArtifactId") as String
-val quarkusPlatformVersion = project.findProperty("quarkusPlatformVersion") as String
-
 dependencies {
-    implementation(enforcedPlatform("$quarkusPlatformGroupId:$quarkusPlatformArtifactId:$quarkusPlatformVersion"))
+    implementation(enforcedPlatform(libs.quarkus.bom))
     implementation("io.quarkus:quarkus-info")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-rest")

@@ -62,7 +62,7 @@ enum class RequestType {
 @JsonTypeInfo(
     use = NAME,
     include = PROPERTY,
-    property = "requestType"
+    property = "requestType",
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = PlayCard::class, name = "PlayCard"),
@@ -70,6 +70,7 @@ enum class RequestType {
     JsonSubTypes.Type(value = ChatMessage::class, name = "ChatMessage"),
     JsonSubTypes.Type(value = RevealCards::class, name = "RevealCards"),
     JsonSubTypes.Type(value = StartNewRound::class, name = "StartNewRound"),
+    JsonSubTypes.Type(value = ClientBroadcast::class, name = "ClientBroadcast"),
 )
 sealed class UserRequest(
     @Suppress("UnusedPrivateProperty", "Used by jackson to parse requests into subtypes")
@@ -130,7 +131,7 @@ class StartNewRound : UserRequest(START_NEW_ROUND) {
  *
  * @property payload the broadcast payload
  */
-class ClientBroadcast(
+data class ClientBroadcast(
     val payload: String,
 ) : UserRequest(CLIENT_BROADCAST) {
     init {

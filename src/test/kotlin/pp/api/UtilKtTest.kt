@@ -14,7 +14,7 @@ class UtilKtTest {
         assertEquals(mapOf("key" to "value"), parseQuery("key=value"))
         assertEquals(
             mapOf("key" to "\uD83E\uDD23\uD83D\uDC0A\uD83E\uDD23"),
-            parseQuery("key=%F0%9F%A4%A3%F0%9F%90%8A%F0%9F%A4%A3")
+            parseQuery("key=%F0%9F%A4%A3%F0%9F%90%8A%F0%9F%A4%A3"),
         )
     }
 }

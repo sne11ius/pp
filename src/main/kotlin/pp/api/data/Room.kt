@@ -52,7 +52,7 @@ class Room(
     @Suppress(
         "TOO_MANY_PARAMETERS",
         "LongParameterList",
-        "What can we do about this?"
+        "What can we do about this?",
     )
     fun copy(
         roomId: String = this.roomId,

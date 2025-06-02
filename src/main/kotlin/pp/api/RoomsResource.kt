@@ -102,7 +102,7 @@ class RoomsResource(
         "Night Sky Sword",
         "Silvery Eternity",
         "Time Piercing Sword",
-        "Twin Edged Wings"
+        "Twin Edged Wings",
     )
     private final val locations = listOf(
         // from https://github.com/datafaker-net/datafaker/blob/main/src/main/resources/en/stargate.yml
@@ -143,7 +143,7 @@ class RoomsResource(
         "Deep Space Nine",
         "Ferenginar",
         "The Briar Patch",
-        "Khitomer"
+        "Khitomer",
     )
 
     /**

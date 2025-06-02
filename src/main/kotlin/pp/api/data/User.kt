@@ -764,7 +764,7 @@ private val funnyNames = listOf(
     "Yule B. Sari",
     "Zeke N. Yeshallfind",
     "Zoe Mudgett Hertz",
-    "Zoltan Pepper"
+    "Zoltan Pepper",
 )
 
 /**

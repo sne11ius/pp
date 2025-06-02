@@ -44,6 +44,15 @@ versions of pp in the [github container registry](https://github.com/sne11ius/pp
 pp cannot be configured and has no runtime dependencies (eg. no database). pp
 runs on port `8080`.
 
+## API Documentation
+
+The [API documentation](API.md) provides detailed information about:
+
+- WebSocket connection parameters
+- Message formats and schemas
+- Available client requests
+- Server responses
+
 ## Development
 
 pp is written using [kotlin](https://kotlinlang.org/) and

@@ -9,3 +9,5 @@
     typeArgument: true
     typeParameter: true
     destructuringDeclaration: true
+- name: HEADER_MISSING_IN_NON_SINGLE_CLASS_FILE
+  enabled: false

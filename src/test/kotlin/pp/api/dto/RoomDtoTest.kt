@@ -23,7 +23,7 @@ class RoomDtoTest {
         val otherUser = User("other", PARTICIPANT, "7", otherSession)
         val room = Room(
             roomId = "nice id",
-            gamePhase = PLAYING
+            gamePhase = PLAYING,
         ) withUser itsYou withUser otherUser
         val dto = RoomDto(room, itsYou)
         assertEquals(room.roomId, dto.roomId)
@@ -33,7 +33,7 @@ class RoomDtoTest {
                 UserDto("name", PARTICIPANT, true, "13"),
                 UserDto("other", PARTICIPANT, false, "✅"),
             ),
-            dto.users
+            dto.users,
         )
         assertEquals("?", dto.average)
         assertEquals(emptyList<LogEntry>(), dto.log)
@@ -49,7 +49,7 @@ class RoomDtoTest {
         val otherUser = User("other", PARTICIPANT, "2", otherSession)
         val room = Room(
             roomId = "nice id",
-            gamePhase = CARDS_REVEALED
+            gamePhase = CARDS_REVEALED,
         ) withUser itsYou withUser otherUser
         val dto = RoomDto(room, itsYou)
         assertEquals("3.0", dto.average)
@@ -65,7 +65,7 @@ class RoomDtoTest {
         val otherUser = User("other", PARTICIPANT, "\uD83C\uDF54", otherSession)
         val room = Room(
             roomId = "nice id",
-            gamePhase = CARDS_REVEALED
+            gamePhase = CARDS_REVEALED,
         ) withUser itsYou withUser otherUser
         val dto = RoomDto(room, itsYou)
         assertEquals("\uD83C\uDF54", dto.average)
@@ -81,7 +81,7 @@ class RoomDtoTest {
         val otherUser = User("other", PARTICIPANT, null, otherSession)
         val room = Room(
             roomId = "nice id",
-            gamePhase = CARDS_REVEALED
+            gamePhase = CARDS_REVEALED,
         ) withUser itsYou withUser otherUser
         val dto = RoomDto(room, itsYou)
         assertEquals("NaN (?)", dto.average)

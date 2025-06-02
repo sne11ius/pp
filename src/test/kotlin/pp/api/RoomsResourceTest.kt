@@ -64,10 +64,10 @@ class RoomsResourceTest {
                             userType = PARTICIPANT,
                             cardValue = "19",
                             session = mock(),
-                        )
-                    )
-                )
-            )
+                        ),
+                    ),
+                ),
+            ),
         )
 
         given()
@@ -79,8 +79,8 @@ class RoomsResourceTest {
                 equalTo(
                     """[{"roomId":"roomId","version":1,"deck":["1","2","3","5","8","13","☕"],
                 |"gamePhase":"PLAYING","users":[{"username":"username","userType":"PARTICIPANT",
-                |"isYourUser":false,"cardValue":"✅"}],"average":"?","log":[]}]""".trimMargin().replace("\n", "")
-                )
+                |"yourUser":false,"cardValue":"✅"}],"average":"?","log":[]}]""".trimMargin().replace("\n", ""),
+                ),
             )
     }
 

@@ -32,7 +32,7 @@ class RoomTest {
         assertEquals(room1.hashCode(), likeRoom1.hashCode()) { "Rooms with equal ids should have equal hashcode" }
         assertNotEquals(room1, unlikeRoom1) { "Rooms with different ids should be not equal" }
         assertNotEquals(
-            room1.hashCode(), unlikeRoom1.hashCode()
+            room1.hashCode(), unlikeRoom1.hashCode(),
         ) { "Rooms with different ids should be have equal hashcode" }
     }
 
@@ -45,7 +45,7 @@ class RoomTest {
         val deck = listOf("nice card")
         val log = listOf(LogEntry(LogLevel.INFO, "nice msg"))
         val copy = room.copy(
-            roomId = "new-id", users = listOf(user), deck = deck, gamePhase = CARDS_REVEALED, log = log
+            roomId = "new-id", users = listOf(user), deck = deck, gamePhase = CARDS_REVEALED, log = log,
         )
         assertNotEquals(room, copy)
         assertEquals(copy.roomId, "new-id")
@@ -103,7 +103,7 @@ class RoomTest {
             users = listOf(user),
             deck = listOf("nice", "card"),
             gamePhase = CARDS_REVEALED,
-            log = listOf(info("nice message"))
+            log = listOf(info("nice message")),
         )
         val roomWithoutUser = room.minus(session)
         assertTrue(roomWithoutUser.isEmpty())

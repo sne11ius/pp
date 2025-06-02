@@ -2,6 +2,7 @@
 kotlin = "2.1.21"
 spotless = "7.0.4"
 detekt = "1.23.8"
+dokka = "2.0.0"
 quarkus = "3.23.0"
 hamcrest-json = "0.3"
 mockito-kotlin = "5.4.0"
@@ -13,6 +14,7 @@ kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "ko
 quarkus = { id = "io.quarkus", version.ref = "quarkus" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 
 [libraries]
 quarkus-bom = { module = "io.quarkus.platform:quarkus-bom", version.ref = "quarkus" }

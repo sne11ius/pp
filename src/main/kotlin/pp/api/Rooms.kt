@@ -228,10 +228,10 @@ class Rooms {
                     } else {
                         room.users.map {
                             it.copy(
-                                cardValue = null
+                                cardValue = null,
                             )
                         }
-                    }
+                    },
                 )
                 val message = if (newGamePhase == CARDS_REVEALED) "revealed the cards" else "started a new round"
                 updated withInfo "${user.username} $message"

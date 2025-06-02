@@ -11,14 +11,14 @@ import pp.api.data.UserType.SPECTATOR
  *
  * @property username display name for this user
  * @property userType type of this user
- * @property isYourUser `true` if this user is "you" - the user associated with the session that receives this message
+ * @property yourUser `true` if this user is "you" - the user associated with the session that receives this message
  * @property cardValue value of the card played by this user. Will only be shown if `isYourUser == true` or gamePhase of
  *   the room is `CARDS_REVEALED`. Else, `✅` will be shown to indicate the user has played a card or `❌` if it hasn't.
  */
 data class UserDto(
     val username: String,
     val userType: UserType,
-    val isYourUser: Boolean,
+    val yourUser: Boolean,
     val cardValue: String,
 ) {
     constructor(
@@ -28,7 +28,7 @@ data class UserDto(
     ) : this(
         username = user.username,
         userType = user.userType,
-        isYourUser = isYourUser,
+        yourUser = isYourUser,
         cardValue = if (user.userType == SPECTATOR) {
             ""
         } else if (gamePhase == CARDS_REVEALED || isYourUser) {

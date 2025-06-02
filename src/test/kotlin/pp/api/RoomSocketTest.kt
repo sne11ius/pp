@@ -59,7 +59,7 @@ class RoomSocketTest {
         val sessionMock = Mockito.mock(Session::class.java)
         val roomSocket = RoomSocket(roomsMock)
         val msg = PlayCard(
-            cardValue = "3"
+            cardValue = "3",
         )
         roomSocket.onMessage(mapper.writeValueAsString(msg), sessionMock)
         verify(roomsMock).submitUserRequest(msg, sessionMock)
@@ -70,7 +70,7 @@ class RoomSocketTest {
         val sessionMock = Mockito.mock(Session::class.java)
         val roomSocket = RoomSocket(roomsMock)
         val msg = ChangeName(
-            name = "nice name"
+            name = "nice name",
         )
         roomSocket.onMessage(mapper.writeValueAsString(msg), sessionMock)
         verify(roomsMock).submitUserRequest(msg, sessionMock)
@@ -81,7 +81,7 @@ class RoomSocketTest {
         val sessionMock = Mockito.mock(Session::class.java)
         val roomSocket = RoomSocket(roomsMock)
         val msg = ChatMessage(
-            message = "nice message"
+            message = "nice message",
         )
         roomSocket.onMessage(mapper.writeValueAsString(msg), sessionMock)
         verify(roomsMock).submitUserRequest(msg, sessionMock)

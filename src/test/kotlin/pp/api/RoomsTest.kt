@@ -50,11 +50,11 @@ class RoomsTest {
         assertEquals(1, rooms.getRooms().size)
         assertEquals(
             2, rooms.getRooms().first().users
-                .size
+                .size,
         )
         assertEquals(
             2, rooms.getRooms().first().users
-                .size
+                .size,
         )
         assertThrows(RuntimeException::class.java) { rooms.ensureRoomContainsUser("another-id", user) }
     }
@@ -79,7 +79,7 @@ class RoomsTest {
         assertEquals(1, rooms.getRooms().size) { "Should have created a room" }
         assertEquals(
             1, rooms.getRooms().first().users
-                .size
+                .size,
         ) { "Should contain two users" }
         rooms.remove(session)
         assertEquals(0, rooms.getRooms().size) { "Should have removed the room" }
@@ -100,7 +100,7 @@ class RoomsTest {
         rooms.remove(unknownSession)
         assertEquals(
             1, rooms.getRooms().first().users
-                .size
+                .size,
         ) { "Should not remove any users" }
         assertEquals(1, rooms.getRooms().size) { "Should not have removed a room" }
     }
@@ -131,7 +131,7 @@ class RoomsTest {
         rooms.submitUserRequest(ChangeName("new name"), session)
         assertEquals(
             "new name", rooms.getRooms().first().users
-                .first().username
+                .first().username,
         )
     }
 
@@ -152,7 +152,7 @@ class RoomsTest {
 
         assertEquals(
             "username", rooms.getRooms().first().users
-                .first().username
+                .first().username,
         )
     }
 
@@ -169,12 +169,12 @@ class RoomsTest {
 
         assertNull(
             rooms.getRooms().first().users
-                .first().cardValue
+                .first().cardValue,
         )
         rooms.submitUserRequest(PlayCard("19"), session)
         assertEquals(
             null, rooms.getRooms().first().users
-                .first().cardValue
+                .first().cardValue,
         )
     }
 
@@ -191,12 +191,12 @@ class RoomsTest {
 
         assertNull(
             rooms.getRooms().first().users
-                .first().cardValue
+                .first().cardValue,
         )
         rooms.submitUserRequest(PlayCard("5"), session)
         assertEquals(
             "5", rooms.getRooms().first().users
-                .first().cardValue
+                .first().cardValue,
         )
     }
 
@@ -213,17 +213,17 @@ class RoomsTest {
 
         assertNull(
             rooms.getRooms().first().users
-                .first().cardValue
+                .first().cardValue,
         )
         rooms.submitUserRequest(PlayCard("5"), session)
         assertEquals(
             "5", rooms.getRooms().first().users
-                .first().cardValue
+                .first().cardValue,
         )
         rooms.submitUserRequest(PlayCard(null), session)
         assertEquals(
             null, rooms.getRooms().first().users
-                .first().cardValue
+                .first().cardValue,
         )
     }
 
@@ -240,7 +240,7 @@ class RoomsTest {
 
         assertNull(
             rooms.getRooms().first().users
-                .first().cardValue
+                .first().cardValue,
         )
         rooms.submitUserRequest(PlayCard("3"), session)
 
@@ -250,11 +250,11 @@ class RoomsTest {
 
         assertEquals(
             "username", rooms.getRooms().first().users
-                .first().username
+                .first().username,
         )
         assertEquals(
             "3", rooms.getRooms().first().users
-                .first().cardValue
+                .first().cardValue,
         )
     }
 
@@ -271,15 +271,15 @@ class RoomsTest {
 
         assertEquals(
             1, rooms.getRooms().first().log
-                .size
+                .size,
         )
         rooms.submitUserRequest(ChatMessage("nice message"), session)
         assertEquals(
             2, rooms.getRooms().first().log
-                .size
+                .size,
         )
         assertEquals(
-            LogEntry(CHAT, "[interesting user]: nice message"), rooms.getRooms().first().log[1]
+            LogEntry(CHAT, "[interesting user]: nice message"), rooms.getRooms().first().log[1],
         )
     }
 
@@ -296,12 +296,12 @@ class RoomsTest {
 
         assertEquals(
             1, rooms.getRooms().first().log
-                .size
+                .size,
         )
         rooms.submitUserRequest(ChatMessage(""), session)
         assertEquals(
             1, rooms.getRooms().first().log
-                .size
+                .size,
         )
     }
 
@@ -319,12 +319,12 @@ class RoomsTest {
         whenever(unknownSession.id).thenReturn("unknown-session-id")
         assertEquals(
             1, rooms.getRooms().first().log
-                .size
+                .size,
         )
         rooms.submitUserRequest(ChatMessage("nice message"), unknownSession)
         assertEquals(
             1, rooms.getRooms().first().log
-                .size
+                .size,
         )
     }
 
@@ -347,7 +347,7 @@ class RoomsTest {
         rooms.submitUserRequest(PlayCard("nice card"), session)
         assertEquals(
             "7", rooms.getRooms().first().users
-                .first().cardValue
+                .first().cardValue,
         )
         assertEquals(
             1,
@@ -355,7 +355,7 @@ class RoomsTest {
                 .first().log
                 .filter {
                     it.level == INFO && "username tried to play card while no round was in progress" in it.message
-                }.size
+                }.size,
         )
     }
 
@@ -376,7 +376,7 @@ class RoomsTest {
         assertEquals(CARDS_REVEALED, rooms.getRooms().first().gamePhase)
         assertEquals(
             3, rooms.getRooms().first().log
-                .size
+                .size,
         )
         assertTrue(
             rooms.getRooms().first().log
@@ -417,12 +417,12 @@ class RoomsTest {
         rooms.submitUserRequest(StartNewRound(), session)
         assertNull(
             rooms.getRooms().first().users
-                .first().cardValue
+                .first().cardValue,
         )
         rooms.submitUserRequest(PlayCard("5"), session)
         assertEquals(
             "5", rooms.getRooms().first().users
-                .first().cardValue
+                .first().cardValue,
         )
     }
 
@@ -441,11 +441,11 @@ class RoomsTest {
         assertEquals(PLAYING, rooms.getRooms().first().gamePhase)
         assertEquals(
             "7", rooms.getRooms().first().users
-                .first().cardValue
+                .first().cardValue,
         )
         assertEquals(
             2, rooms.getRooms().first().log
-                .size
+                .size,
         )
         assertTrue(
             rooms.getRooms().first().log
@@ -466,7 +466,7 @@ class RoomsTest {
         assertEquals(
             LogEntry(level = CLIENT_BROADCAST, message = "nice broadcast message"),
             rooms.getRooms().first().log
-                .last()
+                .last(),
         )
     }
 
@@ -494,11 +494,11 @@ class RoomsTest {
 
         assertEquals(
             1, rooms.getRooms().first().users
-                .size
+                .size,
         )
         assertEquals(
             nonErrorUser.username, rooms.getRooms().first().users
-                .first().username
+                .first().username,
         )
     }
 
@@ -526,7 +526,7 @@ class RoomsTest {
         assertEquals(1, rooms.getRooms().size)
         assertEquals(
             normalUser.username, rooms.getRooms().first().users
-                .first().username
+                .first().username,
         )
     }
 
@@ -545,7 +545,7 @@ class RoomsTest {
         rooms.resetUserConnectionDeadline(session)
         assertTrue(
             rooms.getRooms().first().users
-                .first().connectionDeadline > now.plusMinutes(3)
+                .first().connectionDeadline > now.plusMinutes(3),
         )
 
         // Now lets get that juicy 100% branch coverage on this method ;)

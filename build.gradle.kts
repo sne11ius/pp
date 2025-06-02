@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.quarkus)
     alias(libs.plugins.spotless)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.dokka)
 }
 
 repositories {
@@ -81,10 +82,10 @@ tasks.withType<KotlinCompile> {
 
 configure<SpotlessExtension> {
     kotlin {
-        diktat("2.0.0")
+        diktat("2.0.0").configFile("diktat-analysis.yaml")
     }
     kotlinGradle {
         target("*.gradle.kts")
-        diktat("2.0.0").configFile("./diktat-analysis.yaml")
+        diktat("2.0.0").configFile("diktat-analysis.yaml")
     }
 }

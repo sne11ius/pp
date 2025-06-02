@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/sne11ius/pp/compare/v1.2.0...v1.2.1) (2025-06-02)
+
+
+### Bug Fixes
+
+* fix errors regarding client broadcasts ([8e503c5](https://github.com/sne11ius/pp/commit/8e503c5e19cac29d99a357c754e50d91d9925ace))
+
 # [1.2.0](https://github.com/sne11ius/pp/compare/v1.1.1...v1.2.0) (2025-05-23)
 
 

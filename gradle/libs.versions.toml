@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.1.21"
-spotless = "7.0.3"
+spotless = "7.0.4"
 detekt = "1.23.8"
 quarkus = "3.22.3"
 hamcrest-json = "0.3"

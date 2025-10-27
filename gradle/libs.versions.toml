@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 spotless = "8.0.0"
 detekt = "1.23.8"
 dokka = "2.0.0"

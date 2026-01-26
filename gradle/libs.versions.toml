@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.3.0"
-spotless = "8.1.0"
+spotless = "8.2.0"
 detekt = "1.23.8"
 dokka = "2.1.0"
 quarkus = "3.30.8"

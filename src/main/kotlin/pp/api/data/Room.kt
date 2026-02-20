@@ -2,7 +2,7 @@ package pp.api.data
 
 import io.quarkus.logging.Log
 import jakarta.websocket.Session
-import pp.api.data.GamePhase.PLAYING
+import pp.api.data.GamePhase.Playing
 import pp.api.data.LogLevel.CLIENT_BROADCAST
 import pp.api.data.UserType.PARTICIPANT
 
@@ -28,7 +28,7 @@ class Room(
     val version: Long = 1,
     val users: List<User> = listOf(),
     val deck: List<String> = listOf("1", "2", "3", "5", "8", "13", "☕"),
-    val gamePhase: GamePhase = PLAYING,
+    val gamePhase: GamePhase = Playing,
     val log: List<LogEntry> = emptyList(),
 ) {
     /**
@@ -117,6 +117,20 @@ class Room(
         return copy(
             users = this.users + user,
         )
+    }
+
+    /**
+     * Create a copy of this room, with the cards revealed by the given [user]
+     *
+     * @param user the [User] that changed the phase
+     * @return a copy of this room, with the cards revealed
+     */
+    infix fun withCardsRevealedBy(user: User): Room = if (gamePhase is Playing) {
+        copy(
+            gamePhase = GamePhase.CardsRevealed(this),
+        ) withInfo "${user.username} revealed the cards"
+    } else {
+        this
     }
 
     /**

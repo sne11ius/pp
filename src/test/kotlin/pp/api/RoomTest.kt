@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.whenever
-import pp.api.data.GamePhase.CARDS_REVEALED
+import pp.api.data.GamePhase.Playing
 import pp.api.data.LogEntry
 import pp.api.data.LogLevel
 import pp.api.data.Room
@@ -45,13 +45,13 @@ class RoomTest {
         val deck = listOf("nice card")
         val log = listOf(LogEntry(LogLevel.INFO, "nice msg"))
         val copy = room.copy(
-            roomId = "new-id", users = listOf(user), deck = deck, gamePhase = CARDS_REVEALED, log = log,
+            roomId = "new-id", users = listOf(user), deck = deck, gamePhase = Playing, log = log,
         )
         assertNotEquals(room, copy)
         assertEquals(copy.roomId, "new-id")
         assertEquals(copy.users, listOf(user))
         assertEquals(copy.deck, deck)
-        assertEquals(copy.gamePhase, CARDS_REVEALED)
+        assertEquals(copy.gamePhase, Playing)
         assertEquals(copy.log, log)
     }
 
@@ -102,13 +102,13 @@ class RoomTest {
             roomId = "nice-id",
             users = listOf(user),
             deck = listOf("nice", "card"),
-            gamePhase = CARDS_REVEALED,
+            gamePhase = Playing,
             log = listOf(info("nice message")),
         )
         val roomWithoutUser = room.minus(session)
         assertTrue(roomWithoutUser.isEmpty())
         assertEquals(listOf("nice", "card"), roomWithoutUser.deck)
-        assertEquals(CARDS_REVEALED, roomWithoutUser.gamePhase)
+        assertEquals(Playing, roomWithoutUser.gamePhase)
         assertEquals(listOf(info("nice message")), roomWithoutUser.log)
 
         val unknownSession = mock(Session::class.java)

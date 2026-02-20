@@ -14,8 +14,6 @@ import org.junit.jupiter.api.Test
 import pp.api.data.ChangeName
 import pp.api.data.ChatMessage
 import pp.api.data.ClientBroadcast
-import pp.api.data.GamePhase.CARDS_REVEALED
-import pp.api.data.GamePhase.PLAYING
 import pp.api.data.LogEntry
 import pp.api.data.LogLevel
 import pp.api.data.PlayCard
@@ -23,8 +21,9 @@ import pp.api.data.RevealCards
 import pp.api.data.StartNewRound
 import pp.api.data.UserRequest
 import pp.api.data.UserType.PARTICIPANT
+import pp.api.dto.ClientGamePhase.CARDS_REVEALED
+import pp.api.dto.ClientGamePhase.PLAYING
 import pp.api.dto.RoomDto
-import pp.api.dto.UserDto
 import java.net.URI
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CountDownLatch
@@ -71,12 +70,20 @@ class RealWebSocketIntegrationTest {
 
             client.sendMessageAndAwaitUpdate(1, PlayCard("5")) {
                 assertEquals(5L, version)
-                assertTrue { users == listOf(UserDto(username, PARTICIPANT, true, "5")) }
+                assertEquals(1, users.size)
+                assertEquals(username, users.first().username)
+                assertEquals(PARTICIPANT, users.first().userType)
+                assertEquals(true, users.first().yourUser)
+                assertEquals("5", users.first().cardValue)
             }
 
             client.sendMessageAndAwaitUpdate(1, ChangeName("Test User")) {
                 assertEquals(6L, version)
-                assertTrue { users == listOf(UserDto("Test User", PARTICIPANT, true, "5")) }
+                assertEquals(1, users.size)
+                assertEquals("Test User", users.first().username)
+                assertEquals(PARTICIPANT, users.first().userType)
+                assertEquals(true, users.first().yourUser)
+                assertEquals("5", users.first().cardValue)
                 assertTrue {
                     log.contains(
                         LogEntry(
@@ -89,13 +96,17 @@ class RealWebSocketIntegrationTest {
 
             client.sendMessageAndAwaitUpdate(1, RevealCards()) {
                 assertEquals(8, version)
-                assertEquals(gamePhase, CARDS_REVEALED)
+                assertEquals(CARDS_REVEALED, gamePhase)
             }
 
             client.sendMessageAndAwaitUpdate(1, StartNewRound()) {
                 assertEquals(10, version)
-                assertEquals(gamePhase, PLAYING)
-                assertTrue { users == listOf(UserDto("Test User", PARTICIPANT, true, "")) }
+                assertEquals(PLAYING, gamePhase)
+                assertEquals(1, users.size)
+                assertEquals("Test User", users.first().username)
+                assertEquals(PARTICIPANT, users.first().userType)
+                assertEquals(true, users.first().yourUser)
+                assertEquals("", users.first().cardValue)
             }
 
             client.sendMessageAndAwaitUpdate(1, ClientBroadcast("Broadcast message")) {

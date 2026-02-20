@@ -3,6 +3,7 @@ package pp.api.data
 import jakarta.websocket.SendResult
 import jakarta.websocket.Session
 import pp.api.data.UserType.SPECTATOR
+import pp.api.generateRandomId
 import pp.api.parseQuery
 import pp.api.threeMinutesFromNow
 import java.time.LocalTime
@@ -775,6 +776,7 @@ private val funnyNames = listOf(
  * @property cardValue card the user has played, might be `null` if the user hasn't played any card this round
  * @property session websocket session this user is associated with
  * @property connectionDeadline
+ * @property id this user's unique id
  */
 data class User(
     var username: String,
@@ -782,6 +784,7 @@ data class User(
     var cardValue: String?,
     val session: Session,
     var connectionDeadline: LocalTime = threeMinutesFromNow(),
+    val id: String = generateRandomId(),
 ) {
     /**
      * Create a new [User] for the given [Session]
